@@ -1,0 +1,19 @@
+import argparse,json,platform,sys,hashlib,time,subprocess,os
+from pathlib import Path
+import owned_storage as s
+ap=argparse.ArgumentParser();ap.add_argument('--payload-root',type=Path,required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--image');ap.add_argument('--fixture',type=Path);ap.add_argument('--script',type=Path,required=True);a=ap.parse_args();P=a.payload_root.resolve();O=a.output.resolve();O.mkdir(parents=True,exist_ok=False);arch='arm64'if platform.machine()=='aarch64'else'amd64';platform_name='linux/'+arch
+if a.image:image=a.image
+else:
+ tag='edgebench-nle-policy-diagnostic:'+str(os.getpid());cmd=['docker','build','--platform',platform_name,'-t',tag,str(P/'task/tests')]
+ with (O/'build.log').open('wb')as log:
+  p=subprocess.Popen(cmd,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+  try:rc=p.wait(timeout=3600)
+  except BaseException:os.killpg(p.pid,9);p.wait();raise
+ if rc:raise RuntimeError('Diagnostic native build failed')
+ image=json.loads(s.invoke(['docker','image','inspect',tag])['stdout'])[0]['Id']
+measurement=s.measure_readonly(image,O/'measurement',platform_name)
+with s.OwnedStorage(image,measurement,O/'storage',platform_name)as own:
+ mounts=[(a.script,'/opt/policy_probe.py'),(P/'task/solution/reference','/opt/reference')]
+ if a.fixture:mounts.append((a.fixture,'/opt/same-observations.json'))
+ execution=s.invoke(own.argv(mounts,entrypoint='/opt/nethack-env/bin/python')+['-B','-I','/opt/policy_probe.py'],900,check=False);actual=own.inspect();own.export_logs(O/'logs');report={'execution':execution,'state':actual['State'],'image':image,'actual_policy':actual['HostConfig'],'diagnostic':json.loads((O/'logs/policy-diagnostic.json').read_text())if(O/'logs/policy-diagnostic.json').exists()else None,'model_requests':0,'credentials_injected':False}
+report['cleanup']=json.loads((O/'storage/lifecycle.json').read_text());(O/'report.json').write_text(json.dumps(report,indent=2));assert execution['returncode']==0 and report['cleanup']['destroyed']and report['cleanup']['owned_disk_removed'];print('policy probe native complete',arch)
