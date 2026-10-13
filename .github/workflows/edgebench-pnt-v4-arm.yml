@@ -1,0 +1,52 @@
+name: Edgebench PNT rectangle-residue69 encrypted native ARM validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-arm:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Prepare ephemeral native runner
+        run: |
+          set -euo pipefail
+          uname -m
+          test "$(uname -m)" = aarch64
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq python3-cryptography
+          df -B1 .
+      - name: Verify encrypted transport and unpack private fixtures
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_PNT_V4_TRANSPORT_KEY }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output payload.aesgcm 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/pnt-v4-residue69-20261013/pnt-v4-payload.aesgcm'
+          echo 'ce2ca784023c505a56cc9b91302a1308f7da6657c9d1ba67011e84506cd509c4  payload.aesgcm' | sha256sum --check -
+          python3 crypto_pnt_v4.py decrypt payload.aesgcm decoded
+          chmod 700 decoded
+      - name: Actual native dual build and original Oracle NOP partial controls
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          sudo -n python3 decoded/payload/scripts/run_arm_qc.py --package decoded/payload/package --fixtures decoded/payload/private-fixtures --output evidence/native --reference-repetitions 1 --execute > evidence/controller.log 2>&1
+      - name: Encrypt all detailed validation evidence
+        if: always()
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_PNT_V4_TRANSPORT_KEY }}
+        run: |
+          mkdir -p evidence
+          sudo -n env EDGEBENCH_TRANSPORT_KEY="$EDGEBENCH_TRANSPORT_KEY" python3 crypto_pnt_v4.py encrypt evidence evidence.aesgcm
+          sudo chown "$(id -u):$(id -g)" evidence.aesgcm
+      - name: Retain encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: edgebench-pnt-v4-native-arm-encrypted
+          path: evidence.aesgcm
+          if-no-files-found: error
+          retention-days: 7
