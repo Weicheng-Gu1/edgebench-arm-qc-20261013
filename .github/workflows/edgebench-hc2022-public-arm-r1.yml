@@ -1,0 +1,71 @@
+name: EdgeBench HC2022 public rebuild ARM native component r1
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-native-arm:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Prepare ephemeral encrypted transport host
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = aarch64
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq python3-cryptography python3-venv
+          mkdir -p evidence
+          python3 - <<'PY'
+          import pathlib,os,json,platform,subprocess
+          data={'machine':platform.machine(),'logical_CPU':os.cpu_count(),'proc_meminfo':pathlib.Path('/proc/meminfo').read_text(),'ordinary_bavail_bytes':os.statvfs('.').f_bavail*os.statvfs('.').f_frsize,'uname':subprocess.check_output(['uname','-a'],text=True),'Docker_version':subprocess.check_output(['docker','version','--format','{{json .}}'],text=True),'transport_bootstrap_deps':subprocess.check_output(['dpkg-query','-W','python3-cryptography','python3-venv'],text=True),'source_host8_and_Task_debs_are_separately_locked':True}
+          pathlib.Path('evidence/runner-preflight.json').write_text(json.dumps(data,indent=2)+'\n')
+          PY
+      - name: Decrypt authenticated source package
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_HC2022_PUBLIC_R1_TRANSPORT_KEY }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output payload.aesgcm 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/hc2022-public-static5-r1-20261014/hc2022-public-payload.aesgcm'
+          echo 'ecd61dc4a02afa3ca25913f0014e4b4d99822610a63e4b0c287b19bab6059937  payload.aesgcm' | sha256sum --check -
+          python3 -B crypto_hc2022_public_r1.py decrypt payload.aesgcm decoded
+          chmod 700 decoded
+          python3 -B - <<'PY'
+          import pathlib,json,hashlib
+          root=pathlib.Path('decoded/payload');m=json.loads((root/'transport-source-manifest.json').read_text());assert all(hashlib.sha256((root/rel).read_bytes()).hexdigest()==r['SHA']for rel,r in m['files'].items());pathlib.Path('evidence/source-verification.json').write_text(json.dumps({'source_manifest_SHA':hashlib.sha256((root/'transport-source-manifest.json').read_bytes()).hexdigest(),'verified_members':len(m['files']),'all_SHA_equal':True,'model_requests':0},indent=2)+'\n')
+          PY
+      - name: Public locked host8 fetch and install
+        run: |
+          set -euo pipefail
+          python3 -B decoded/payload/r4/fetch_public_host8.py --architecture arm64 --output "$PWD/host8-wheels" > evidence/host8-fetch.stdout 2> evidence/host8-fetch.stderr
+          python3.12 -m venv "$PWD/host8-venv"
+          "$PWD/host8-venv/bin/pip" install --no-deps --no-index --find-links "$PWD/host8-wheels" --require-hashes -r decoded/payload/r4/arm64-host8-requirements.txt > evidence/host8-install.stdout 2> evidence/host8-install.stderr
+          "$PWD/host8-venv/bin/pip" freeze > evidence/host8-actual-freeze.txt
+      - name: Actual public no-cache dual build and original native free controls
+        run: |
+          set -euo pipefail
+          sudo -n "$PWD/host8-venv/bin/python" -B decoded/payload/r4/build_and_validate_prepared.py --architecture arm64 --framework "$PWD/decoded/payload/r3/evaluation/framework-source-current" --task "$PWD/decoded/payload/r3/tasks/hashcode-contributor-scheduling" --output "$PWD/evidence/native" --execute > evidence/controller.stdout 2> evidence/controller.stderr
+      - name: Independent own container and disk cleanup
+        if: always()
+        run: |
+          if test -e decoded/payload/r4/audit_own_public_cleanup.py; then
+            sudo -n python3 -B decoded/payload/r4/audit_own_public_cleanup.py --evidence "$PWD/evidence/native" > evidence/cleanup.stdout 2> evidence/cleanup.stderr
+          fi
+      - name: Encrypt detailed raw evidence
+        if: always()
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_HC2022_PUBLIC_R1_TRANSPORT_KEY }}
+        run: |
+          mkdir -p evidence
+          sudo -n env EDGEBENCH_TRANSPORT_KEY="$EDGEBENCH_TRANSPORT_KEY" python3 -B crypto_hc2022_public_r1.py encrypt evidence evidence.aesgcm
+          sudo chown "$(id -u):$(id -g)" evidence.aesgcm
+      - name: Retain encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: edgebench-hc2022-public-native-arm-encrypted
+          path: evidence.aesgcm
+          if-no-files-found: error
+          retention-days: 7
