@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  vrptw-full-receiver-native-r1:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: VRPTW public receiver native ARM source-specific R5 and eight-control interfaces
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_VRPTW_FULL_RECEIVER_NATIVE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/vrptw-full-receiver-native-r1/circle_worker.py --lane native --work /tmp/vrptw-full-receiver-native-r1-work --output /tmp/vrptw-full-receiver-native-r1-public
+      - store_artifacts:
+          path: /tmp/vrptw-full-receiver-native-r1-public
+          destination: vrptw-full-receiver-native-r1/native
+workflows:
+  vrptw-full-receiver-native-r1-only:
+    jobs:
+      - vrptw-full-receiver-native-r1:
+          filters:
+            branches:
+              only: edgebench-vrptw-full-receiver-native-r1-20261015
