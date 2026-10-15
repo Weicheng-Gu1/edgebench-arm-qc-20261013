@@ -1,8 +1,8 @@
 {
   "public_files": {
     "circle_worker.py": {
-      "SHA256": "c621489208b4a7da649e016ba994f2a796761572f4e61417835ab9bdcda0ccc8",
-      "bytes": 8811,
+      "SHA256": "c636ec0286d2f21c4a28ef7c618f7ad11d2800ed81173914b22724fca18777ba",
+      "bytes": 11245,
       "mode": 420
     },
     "crypto_action.py": {
