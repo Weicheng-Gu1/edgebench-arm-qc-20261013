@@ -1,0 +1,10 @@
+{
+  "ready_for_execution": true,
+  "purpose": "two-proper-role-native-ARM-build-only-no-grade",
+  "approved_branch": "edgebench-sealed-maxcut-proper-role-build-20261015T172959Z",
+  "one_use_nonce": "51256ebe98e59c99335d5ea8af064215",
+  "ciphertext_sha256": "5c6bfac57d54374550d8785b7670a9d82773aa37060bc13032f185f4df7febf3",
+  "attempt_window_seconds": 3600,
+  "original_inner_verifier_budget_seconds": 10800,
+  "mathematical_grade_will_not_run": true
+}
