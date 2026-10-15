@@ -1,0 +1,123 @@
+name: Santa original source native ARM and actual single multi-platform role builds
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-source:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            machine: x86_64
+            runner: ubuntu-24.04
+            repetitions: 3
+          - arch: arm64
+            machine: aarch64
+            runner: ubuntu-24.04-arm
+            repetitions: 1
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Prepare dedicated ephemeral build storage
+        run: |
+          mkdir -p evidence
+          sudo -n env GITHUB_ACTIONS=true RUNNER_ENVIRONMENT='${{ runner.environment }}' /usr/bin/python3 -B santa_ephemeral_job_storage_r1.py evidence/ephemeral-job-storage.json
+      - name: Install exact public SHA controller wheels
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = '${{ matrix.machine }}'
+          curl --fail --location --retry 3 --output public-host-dependencies.zip 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/m100-public-native-matrix-r1-20261015-static5-r1-20261014/public-host-dependencies.zip'
+          echo '6c528f1986901036258a0d07004537c9c2c8bf7357c16ba0af3a3cb2c5a122a9  public-host-dependencies.zip' | sha256sum --check -
+          unzip -q public-host-dependencies.zip -d public-host-dependencies
+          /usr/bin/python3 -m pip install --no-index --find-links public-host-dependencies/common --find-links public-host-dependencies/${{ matrix.arch }} --require-hashes --target /tmp/santa-public-controller-deps -r public-host-dependencies/requirements-${{ matrix.arch }}.txt
+      - name: Authenticate encrypted original Santa source and fixed reference
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_SANTA_PUBLIC_NATIVE_MATRIX_R1_KEY }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output payload.aesgcm 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/santa-public-native-matrix-r1-20261015/santa-public-native-matrix-r1-20261015-payload.aesgcm'
+          echo '720351475730fa1cdd8512fd2fc3f4866c4f371aaaab78c46e06be218905b972  payload.aesgcm' | sha256sum --check -
+          PYTHONPATH=/tmp/santa-public-controller-deps /usr/bin/python3 -B crypto_santa_public_native_matrix_r1.py decrypt payload.aesgcm decoded
+          chmod 700 decoded
+          echo '94b2c8999cd13b74ac6317960c3315d845430326e9b0d42d2892bf3d40143e74  decoded/payload/RAW-MANIFEST.json' | sha256sum --check -
+          /usr/bin/python3 -B decoded/payload/scripts/verify_payload.py decoded/payload evidence/payload-identity.json
+      - name: Build both original-source public roles on actual native machine
+        run: |
+          set -euo pipefail
+          sudo -n env DOCKER_BUILDKIT=0 PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -B decoded/payload/scripts/build_native_roles.py --platform linux/${{ matrix.arch }} --output evidence/native-build > evidence/native-build-controller.log 2>&1
+      - name: Native original Harbor Verifier fixed-reference repetitions with actual15Gi budget
+        run: |
+          set -euo pipefail
+          sudo -n env PYTHONPATH=/tmp/santa-public-controller-deps PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -B decoded/payload/scripts/run_native_variant.py --platform linux/${{ matrix.arch }} --reference-repetitions ${{ matrix.repetitions }} --skip-nop --images evidence/native-build/images.json --output evidence/native-controls --framework decoded/payload/scripts --execute > evidence/native-controller.log 2>&1
+      - name: Encrypt actual evidence including failures
+        if: always()
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_SANTA_PUBLIC_NATIVE_MATRIX_R1_KEY }}
+        run: |
+          mkdir -p evidence
+          sudo -n env EDGEBENCH_TRANSPORT_KEY="$EDGEBENCH_TRANSPORT_KEY" PYTHONPATH=/tmp/santa-public-controller-deps /usr/bin/python3 -B crypto_santa_public_native_matrix_r1.py encrypt evidence evidence.aesgcm
+          sudo chown "$(id -u):$(id -g)" evidence.aesgcm
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: edgebench-santa-public-r1-native-${{ matrix.arch }}-encrypted
+          path: evidence.aesgcm
+          if-no-files-found: error
+          retention-days: 7
+  single-multiplatform-role:
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [agent, verifier]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 210
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Prepare dedicated ephemeral job storage
+        run: |
+          mkdir -p evidence
+          sudo -n env GITHUB_ACTIONS=true RUNNER_ENVIRONMENT='${{ runner.environment }}' /usr/bin/python3 -B santa_ephemeral_job_storage_r1.py evidence/ephemeral-job-storage.json
+      - name: Fetch exact public crypto dependencies
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output public-host-dependencies.zip 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/m100-public-native-matrix-r1-20261015-static5-r1-20261014/public-host-dependencies.zip'
+          echo '6c528f1986901036258a0d07004537c9c2c8bf7357c16ba0af3a3cb2c5a122a9  public-host-dependencies.zip' | sha256sum --check -
+          unzip -q public-host-dependencies.zip -d public-host-dependencies
+          /usr/bin/python3 -m pip install --no-index --find-links public-host-dependencies/common --find-links public-host-dependencies/amd64 --require-hashes --target /tmp/santa-public-controller-deps -r public-host-dependencies/requirements-amd64.txt
+      - name: Authenticate same encrypted original source
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_SANTA_PUBLIC_NATIVE_MATRIX_R1_KEY }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output payload.aesgcm 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/santa-public-native-matrix-r1-20261015/santa-public-native-matrix-r1-20261015-payload.aesgcm'
+          echo '720351475730fa1cdd8512fd2fc3f4866c4f371aaaab78c46e06be218905b972  payload.aesgcm' | sha256sum --check -
+          PYTHONPATH=/tmp/santa-public-controller-deps /usr/bin/python3 -B crypto_santa_public_native_matrix_r1.py decrypt payload.aesgcm decoded
+          chmod 700 decoded
+          echo '94b2c8999cd13b74ac6317960c3315d845430326e9b0d42d2892bf3d40143e74  decoded/payload/RAW-MANIFEST.json' | sha256sum --check -
+          /usr/bin/python3 -B decoded/payload/scripts/verify_payload.py decoded/payload evidence/payload-identity.json
+      - name: One actual buildx invocation for both platforms, discard validated OCI stream
+        run: |
+          set -euo pipefail
+          sudo -n env GITHUB_RUN_ID='${{ github.run_id }}' PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -B decoded/payload/scripts/run_single_multiplatform.py --role '${{ matrix.role }}' --payload decoded/payload --output evidence/build > evidence/multi-controller.log 2>&1
+      - name: Encrypt actual small evidence including failures
+        if: always()
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_SANTA_PUBLIC_NATIVE_MATRIX_R1_KEY }}
+        run: |
+          mkdir -p evidence
+          sudo -n env EDGEBENCH_TRANSPORT_KEY="$EDGEBENCH_TRANSPORT_KEY" PYTHONPATH=/tmp/santa-public-controller-deps /usr/bin/python3 -B crypto_santa_public_native_matrix_r1.py encrypt evidence evidence.aesgcm
+          sudo chown "$(id -u):$(id -g)" evidence.aesgcm
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: edgebench-santa-public-r1-multi-${{ matrix.role }}-encrypted
+          path: evidence.aesgcm
+          if-no-files-found: error
+          retention-days: 7
