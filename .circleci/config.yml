@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  esa-bounded-physics-native-r3:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Corrected ESA native ARM source-specific R5 and eight-control interfaces
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_ESA_BOUNDED_PHYSICS_NATIVE_R3_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/esa-bounded-physics-native-r3/circle_worker.py --lane native --work /tmp/esa-bounded-physics-native-r3-work --output /tmp/esa-bounded-physics-native-r3-public
+      - store_artifacts:
+          path: /tmp/esa-bounded-physics-native-r3-public
+          destination: esa-bounded-physics-native-r3/native
+workflows:
+  esa-bounded-physics-native-r3-only:
+    jobs:
+      - esa-bounded-physics-native-r3:
+          filters:
+            branches:
+              only: edgebench-esa-bounded-physics-native-measurement-r3-20261015
