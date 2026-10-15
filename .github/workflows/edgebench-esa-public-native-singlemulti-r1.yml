@@ -1,0 +1,113 @@
+name: ESA same-source native dualarch and single-multiplatform public rebuild
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-public:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            machine: x86_64
+            runner: ubuntu-24.04
+          - arch: arm64
+            machine: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Fetch exact public host dependencies only
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output public-host-dependencies.zip 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/m100-public-native-matrix-r1-20261015-static5-r1-20261014/public-host-dependencies.zip'
+          echo '6c528f1986901036258a0d07004537c9c2c8bf7357c16ba0af3a3cb2c5a122a9  public-host-dependencies.zip' | sha256sum --check -
+          mkdir public-host-dependencies
+          unzip -q public-host-dependencies.zip -d public-host-dependencies
+          /usr/bin/python3 -m pip install --no-index --find-links public-host-dependencies/common --find-links public-host-dependencies/${{ matrix.arch }} --require-hashes --target /tmp/esa-public-host-deps -r public-host-dependencies/requirements-${{ matrix.arch }}.txt
+      - name: Decrypt exact source and private control plans
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_ESA_PUBLIC_NATIVE_MATRIX_R1_TRANSPORT_KEY }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output payload.aesgcm 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/esa-public-native-singlemulti-r1-20261015/esa-public-native-singlemulti-r1-20261015-payload.aesgcm'
+          echo '4dfbc872bea2f97f8101c8b46f65fc4cc8018fcf8f4097a0d444aee1a4264487  payload.aesgcm' | sha256sum --check -
+          PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 crypto_esa_public_native_matrix_r1.py decrypt payload.aesgcm decoded
+          chmod 700 decoded
+          echo '0b4755b8b39e08aaec604e55f4ad80997e570214790337168181e5e8687cb0c7  decoded/payload/source-esa-public-runtime-r1.tar.gz' | sha256sum --check -
+      - name: Native cold build both roles and original ESA score controls
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = '${{ matrix.machine }}'
+          mkdir -p evidence
+          sudo -n env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 -B decoded/payload/scripts/run_native_build_and_controls.py --payload decoded/payload --output evidence/native --arch '${{ matrix.arch }}' > evidence/controller.log 2>&1
+      - name: Encrypt exact raw evidence including failures
+        if: always()
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_ESA_PUBLIC_NATIVE_MATRIX_R1_TRANSPORT_KEY }}
+        run: |
+          mkdir -p evidence
+          sudo -n env EDGEBENCH_TRANSPORT_KEY="$EDGEBENCH_TRANSPORT_KEY" PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 crypto_esa_public_native_matrix_r1.py encrypt evidence evidence.aesgcm
+          sudo chown "$(id -u):$(id -g)" evidence.aesgcm
+      - name: Retain encrypted raw evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: edgebench-esa-public-native-r1-${{ matrix.arch }}-encrypted
+          path: evidence.aesgcm
+          if-no-files-found: error
+          retention-days: 7
+  single-multiplatform-role:
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [agent, verifier]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Fetch exact public host dependencies only
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output public-host-dependencies.zip 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/m100-public-native-matrix-r1-20261015-static5-r1-20261014/public-host-dependencies.zip'
+          echo '6c528f1986901036258a0d07004537c9c2c8bf7357c16ba0af3a3cb2c5a122a9  public-host-dependencies.zip' | sha256sum --check -
+          mkdir public-host-dependencies
+          unzip -q public-host-dependencies.zip -d public-host-dependencies
+          /usr/bin/python3 -m pip install --no-index --find-links public-host-dependencies/common --find-links public-host-dependencies/amd64 --require-hashes --target /tmp/esa-public-host-deps -r public-host-dependencies/requirements-amd64.txt
+      - name: Decrypt exact source and private control plans
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_ESA_PUBLIC_NATIVE_MATRIX_R1_TRANSPORT_KEY }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output payload.aesgcm 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/esa-public-native-singlemulti-r1-20261015/esa-public-native-singlemulti-r1-20261015-payload.aesgcm'
+          echo '4dfbc872bea2f97f8101c8b46f65fc4cc8018fcf8f4097a0d444aee1a4264487  payload.aesgcm' | sha256sum --check -
+          PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 crypto_esa_public_native_matrix_r1.py decrypt payload.aesgcm decoded
+          chmod 700 decoded
+          echo '0b4755b8b39e08aaec604e55f4ad80997e570214790337168181e5e8687cb0c7  decoded/payload/source-esa-public-runtime-r1.tar.gz' | sha256sum --check -
+      - name: One build invocation two platforms with streamed OCI validation
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          sudo -n env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 -B decoded/payload/scripts/run_single_multiplatform.py --role '${{ matrix.role }}' --payload decoded/payload --output evidence/multi > evidence/controller.log 2>&1
+      - name: Encrypt exact raw evidence including failures
+        if: always()
+        env:
+          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_ESA_PUBLIC_NATIVE_MATRIX_R1_TRANSPORT_KEY }}
+        run: |
+          mkdir -p evidence
+          sudo -n env EDGEBENCH_TRANSPORT_KEY="$EDGEBENCH_TRANSPORT_KEY" PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 crypto_esa_public_native_matrix_r1.py encrypt evidence evidence.aesgcm
+          sudo chown "$(id -u):$(id -g)" evidence.aesgcm
+      - name: Retain encrypted raw evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: edgebench-esa-public-singlemulti-r1-${{ matrix.role }}-encrypted
+          path: evidence.aesgcm
+          if-no-files-found: error
+          retention-days: 7
