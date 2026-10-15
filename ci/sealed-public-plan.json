@@ -1,0 +1,8 @@
+{
+  "ready_for_execution": true,
+  "approved_branch": "edgebench-sealed-hardsphere-v008-20261015T130254Z",
+  "one_use_nonce": "9abd676b27b358424012a6adf494738b",
+  "ciphertext_sha256": "208c5795a9277cd7426d08527c95d0dc5c0334cacdec0ce6077a71fc4bb0ca49",
+  "attempt_window_seconds": 14400,
+  "original_inner_verifier_budget_seconds": 21600
+}
