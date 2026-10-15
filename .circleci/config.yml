@@ -1,0 +1,41 @@
+version: 2.1
+jobs:
+  painting-full-receiver-amd64-r2:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: Painting own full public receiver AMD64
+          no_output_timeout: 185m
+          command: sudo --preserve-env=EDGEBENCH_PAINTING_FULL_RECEIVER_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/painting-full-receiver-r2/circle_worker.py --lane native-amd64 --work /tmp/painting-full-amd64-work --output /tmp/painting-full-amd64-public
+      - store_artifacts:
+          path: /tmp/painting-full-amd64-public
+          destination: painting-full-receiver-r2/native-amd64
+  painting-full-receiver-arm64-r2:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Painting own full public receiver ARM64
+          no_output_timeout: 185m
+          command: sudo --preserve-env=EDGEBENCH_PAINTING_FULL_RECEIVER_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/painting-full-receiver-r2/circle_worker.py --lane native-arm64 --work /tmp/painting-full-arm64-work --output /tmp/painting-full-arm64-public
+      - store_artifacts:
+          path: /tmp/painting-full-arm64-public
+          destination: painting-full-receiver-r2/native-arm64
+workflows:
+  painting-full-receiver-r2-only:
+    jobs:
+      - painting-full-receiver-amd64-r2:
+          filters:
+            branches:
+              only: edgebench-painting-full-receiver-r2-20261015
+      - painting-full-receiver-arm64-r2:
+          requires:
+            - painting-full-receiver-amd64-r2
+          filters:
+            branches:
+              only: edgebench-painting-full-receiver-r2-20261015

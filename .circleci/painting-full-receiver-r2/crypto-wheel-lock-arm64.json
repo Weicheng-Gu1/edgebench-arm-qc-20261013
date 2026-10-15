@@ -1,0 +1,29 @@
+{
+  "source_lock_SHA256": "9aa6d9c69177589ee0dbcb689a8d89b59b20e75dec8ecca559358a0c36bb78a3",
+  "files": [
+    {
+      "package": "cryptography",
+      "version": "50.0.2",
+      "url": "https://files.pythonhosted.org/packages/71/37/6202e488cc1eb625ea110c292c6bda92823176e023f427d8d5660ce8d632/cryptography-50.0.2-cp311-abi3-manylinux_2_34_aarch64.whl",
+      "size": 4737859,
+      "sha256": "87e9ce85beb6b328ba370cc6e6aea483c92617b4c95b1d33a49297eb662bfb04",
+      "wheel": "cryptography-50.0.2-cp311-abi3-manylinux_2_34_aarch64.whl"
+    },
+    {
+      "package": "cffi",
+      "version": "2.1.1",
+      "url": "https://files.pythonhosted.org/packages/44/de/f98430906df1545ffde0d543dd124a7a439bc2cd32b36b9c53f805df7333/cffi-2.1.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl",
+      "size": 222389,
+      "sha256": "68e62fe11f30d5ca8289242866f0a5291402d8529ca2178ab8afc5c9694ae890",
+      "wheel": "cffi-2.1.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl"
+    },
+    {
+      "package": "pycparser",
+      "version": "3.0",
+      "url": "https://files.pythonhosted.org/packages/0c/c3/44f3fbbfa403ea2a7c779186dc20772604442dde72947e7d01069cbe98e3/pycparser-3.0-py3-none-any.whl",
+      "size": 48172,
+      "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+      "wheel": "pycparser-3.0-py3-none-any.whl"
+    }
+  ]
+}
