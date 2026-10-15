@@ -1,0 +1,39 @@
+from pathlib import Path
+import hashlib,json,os,subprocess,tarfile,traceback
+ROOT=Path('/ci'); ROOT.mkdir(exist_ok=True); O=ROOT/'artifact';O.mkdir(exist_ok=True)
+M=json.loads(Path('ci/transport.json').read_text()); H=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+status=1
+try:
+ c=ROOT/'payload.enc'
+ with c.open('wb')as f:
+  for row in M['chunks']:
+   p=Path('ci')/row['name'];assert H(p)==row['sha256'];f.write(p.read_bytes())
+ assert H(c)==M['encrypted_sha256']
+ plain=ROOT/'payload.tar.gz'
+ subprocess.run(['openssl','enc','-d','-aes-256-cbc','-pbkdf2','-iter','200000','-pass','env:'+M['key_env'],'-in',str(c),'-out',str(plain)],check=True,capture_output=True)
+ assert H(plain)==M['plaintext_sha256']
+ with tarfile.open(plain)as z:
+  for m in z.getmembers():assert m.isfile() and not Path(m.name).is_absolute() and '..' not in Path(m.name).parts
+  z.extractall(ROOT,filter='data')
+ I=json.loads((ROOT/'source/inputs.json').read_text());T=ROOT/'frozen-task';T.mkdir()
+ for n,v in I['task_hashes'].items():
+  assert not Path(n).is_absolute() and '..'not in Path(n).parts
+  src=ROOT/'content'/v;assert H(src)==v
+  p=T/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(src.read_bytes());p.chmod(int(I['file_modes'][n],8))
+ assert len([p for p in T.rglob('*')if p.is_file()])==267
+ (O/'actual-restored-source-binding.json').write_text(json.dumps({'passed':True,'physical_files':267,'task_hashes':I['task_hashes'],'file_modes_verified':all((T/n).stat().st_mode&511==int(v,8)for n,v in I['file_modes'].items()),'transport':'SHA-bound encrypted content-addressed bundle; no task edits'}))
+ assert os.uname().machine=='aarch64'
+ subprocess.run(['docker','pull','--platform','linux/arm64','ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55'],stdout=(O/'base-pull.stdout').open('w'),stderr=(O/'base-pull.stderr').open('w'),check=True,timeout=300)
+ os.environ.update(EXPECTED_ARCH='arm64',RAILWAY_OWN_CI_ROOT='/ci',GITHUB_RUN_ID=os.environ.get('CIRCLE_BUILD_NUM','circle'))
+ q=subprocess.run(['python3','/ci/source/run-controlled-arm.py'],stdout=(O/'driver.stdout').open('w'),stderr=(O/'driver.stderr').open('w'),timeout=2000)
+ status=q.returncode
+except BaseException:
+ (O/'bootstrap-traceback.txt').write_text(traceback.format_exc())
+finally:
+ artifact=Path('circle-artifact');artifact.mkdir(exist_ok=True)
+ raw=ROOT/'details.tar.gz'
+ with tarfile.open(raw,'w:gz')as z:z.add(O,arcname='artifact')
+ subprocess.run(['openssl','enc','-aes-256-cbc','-pbkdf2','-iter','200000','-pass','env:'+M['key_env'],'-in',str(raw),'-out',str(artifact/'details.tar.gz.enc')],check=True,capture_output=True)
+ report={'passed':status==0,'exit_code':status,'host_architecture':os.uname().machine,'task_files':267,'models_started':0,'task_version':'business-efficiency-score-contract-doc-v5','encrypted_details_sha256':H(artifact/'details.tar.gz.enc'),'scope':'Actual original task Docker ARM controls; no model growth or license acceptance implied'}
+ (artifact/'report.json').write_text(json.dumps(report,indent=2));print(json.dumps(report))
+raise SystemExit(status)

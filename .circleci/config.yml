@@ -1,0 +1,24 @@
+version: 2.1
+jobs:
+  ahc043-current267-native-arm:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Exact current task native ARM Docker controls
+          no_output_timeout: 40m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            sudo mkdir -p /ci
+            sudo chown "$USER:$USER" /ci
+            timeout 2400 python3 ci/bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: game-ahc043-current267-native-arm
+workflows:
+  ahc043-current267-native-arm:
+    jobs:
+      - ahc043-current267-native-arm
