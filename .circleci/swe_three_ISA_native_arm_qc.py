@@ -15,7 +15,7 @@ try:
  run(['openssl','enc','-d','-aes-256-cbc','-pbkdf2','-iter','200000','-md','sha256','-in',str(encrypted),'-out',str(root/'payload.tar.gz'),'-pass','file:'+str(key)],'decrypt.log',timeout=120)
  with tarfile.open(root/'payload.tar.gz')as t:t.extractall(root/'payload',filter='data')
  payload=root/'payload';task=payload/'task';manifest=json.loads((payload/'manifest.json').read_text());actual={str(p.relative_to(task)):hashlib.sha256(p.read_bytes()).hexdigest()for p in sorted(task.rglob('*'))if p.is_file()and'__pycache__'not in p.parts};assert actual==manifest['task_hashes'];report['frozen_task_hashes_verified']=True
- image='swe-three-ISA-native-arm-qc:20261015-r2';run(['docker','build','--platform','linux/arm64','--network=none','-t',image,str(task/'verifier')],'actual-grader-build.log',timeout=2400)
+ image='swe-three-isa-native-arm-qc:20261015-r2';run(['docker','build','--platform','linux/arm64','--network=none','-t',image,str(task/'verifier')],'actual-grader-build.log',timeout=2400)
  info=json.loads(subprocess.check_output(['docker','image','inspect',image],text=True))[0];assert info['Architecture']=='arm64';report['actual_grader_image_architecture']=info['Architecture'];report['actual_grader_image_id']=info['Id']
  check="import os,json;assert os.geteuid()==65534;print(json.dumps({p:os.access(p,os.R_OK)for p in ['/opt/swe-reference-source/adapter/main.cpp','/opt/swe-reference/reference','/tests/private/corpus.json']}))"
  privacy=json.loads(subprocess.check_output(['docker','run','--rm','--network','none','--read-only','--user','65534:65534','--entrypoint','/usr/bin/python3',image,'-c',check],text=True));assert not any(privacy.values());report['actual_nonroot_private_paths_readable']=privacy
