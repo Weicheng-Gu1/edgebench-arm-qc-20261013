@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm-two-proper-roles-one-original-fixed-control",
+  "approved_branch": "edgebench-sealed-uniquegames-gh-arm-20261015t203030z-8828683d",
+  "one_use_environment": "edgebench-uniquegames-arm-once-20261015t203030z-8828683d",
+  "one_use_nonce": "f908677d8d39813d503ab5b0553d992e",
+  "ciphertext_sha256": "18c54a545b84520375f4a639d46e49ec5c2a4455b4c11672fd88f399b37b5a6b",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
