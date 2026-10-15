@@ -1,0 +1,41 @@
+version: 2.1
+jobs:
+  kahip-full-receiver-amd64-r2:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: KaHIP own full public receiver AMD64
+          no_output_timeout: 185m
+          command: sudo --preserve-env=EDGEBENCH_KAHIP_FULL_RECEIVER_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/kahip-full-receiver-r2/circle_worker.py --lane native-amd64 --work /tmp/kahip-full-amd64-work --output /tmp/kahip-full-amd64-public
+      - store_artifacts:
+          path: /tmp/kahip-full-amd64-public
+          destination: kahip-full-receiver-r2/native-amd64
+  kahip-full-receiver-arm64-r2:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: KaHIP own full public receiver ARM64
+          no_output_timeout: 185m
+          command: sudo --preserve-env=EDGEBENCH_KAHIP_FULL_RECEIVER_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/kahip-full-receiver-r2/circle_worker.py --lane native-arm64 --work /tmp/kahip-full-arm64-work --output /tmp/kahip-full-arm64-public
+      - store_artifacts:
+          path: /tmp/kahip-full-arm64-public
+          destination: kahip-full-receiver-r2/native-arm64
+workflows:
+  kahip-full-receiver-r2-only:
+    jobs:
+      - kahip-full-receiver-amd64-r2:
+          filters:
+            branches:
+              only: edgebench-kahip-full-receiver-r2-20261015
+      - kahip-full-receiver-arm64-r2:
+          requires:
+            - kahip-full-receiver-amd64-r2
+          filters:
+            branches:
+              only: edgebench-kahip-full-receiver-r2-20261015
