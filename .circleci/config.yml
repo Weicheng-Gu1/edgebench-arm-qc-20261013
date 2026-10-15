@@ -1,0 +1,39 @@
+version: 2.1
+jobs:
+  spaceship-multi-agent:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Spaceship public agent one dualarch build on ARM executor
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_SPACESHIP_MULTI_ARMEXEC_CIRCLE_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/spaceship-multi-armexec-r2/circle_worker.py --lane multi-agent --work /tmp/spaceship-r2-multi-agent-work --output /tmp/spaceship-r2-multi-agent-public
+      - store_artifacts:
+          path: /tmp/spaceship-r2-multi-agent-public
+          destination: spaceship-multi-armexec-r2/multi-agent
+  spaceship-multi-verifier:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Spaceship public verifier one dualarch build on ARM executor
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_SPACESHIP_MULTI_ARMEXEC_CIRCLE_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/spaceship-multi-armexec-r2/circle_worker.py --lane multi-verifier --work /tmp/spaceship-r2-multi-verifier-work --output /tmp/spaceship-r2-multi-verifier-public
+      - store_artifacts:
+          path: /tmp/spaceship-r2-multi-verifier-public
+          destination: spaceship-multi-armexec-r2/multi-verifier
+workflows:
+  spaceship-public-multi-armexecutor-repair:
+    jobs:
+      - spaceship-multi-agent:
+          filters:
+            branches:
+              only: edgebench-spaceship-multi-armexec-circle-20261015-r2
+      - spaceship-multi-verifier:
+          filters:
+            branches:
+              only: edgebench-spaceship-multi-armexec-circle-20261015-r2
