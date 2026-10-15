@@ -19,7 +19,7 @@ try:
  info=json.loads(subprocess.check_output(['docker','image','inspect',image],text=True))[0];assert info['Architecture']=='arm64';report['actual_grader_image_architecture']=info['Architecture'];report['actual_grader_image_id']=info['Id']
  check="import os,json;assert os.geteuid()==65534;print(json.dumps({p:os.access(p,os.R_OK)for p in ['/opt/swe-reference-source/adapter/main.cpp','/opt/swe-reference/reference','/tests/private/corpus.json']}))"
  privacy=json.loads(subprocess.check_output(['docker','run','--rm','--network','none','--read-only','--user','65534:65534','--entrypoint','/usr/bin/python3',image,'-c',check],text=True));assert not any(privacy.values());report['actual_nonroot_private_paths_readable']=privacy
- common=['docker','run','--rm','--platform','linux/arm64','--network','none','--cpus','4','--memory','16g','--memory-swap','16g','--read-only','--tmpfs','/tmp:rw,nosuid,nodev,size=4g']
+ common=['docker','run','--rm','--platform','linux/arm64','--network','none','--cpus','4','--memory','16g','--memory-swap','16g','--read-only','--tmpfs','/tmp:rw,exec,nosuid,nodev,size=4g']
  # Trusted-reference preflight covers every frozen functional and throughput row,
  # using the same isolation and per-process limits as the actual grader.
  compat=root/'teacher-conformance.py';compat.write_text('''import sys,json,tempfile,pathlib,hashlib
