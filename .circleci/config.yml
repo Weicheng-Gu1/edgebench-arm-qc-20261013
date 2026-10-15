@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  tensor-full-receiver-native-r1:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Tensor public receiver native ARM source-specific R5 and full native/periodic Tensor controls
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_Tensor_FULL_RECEIVER_NATIVE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/tensor-full-receiver-native-r1/circle_worker.py --lane native --work /tmp/tensor-full-receiver-native-r1-work --output /tmp/tensor-full-receiver-native-r1-public
+      - store_artifacts:
+          path: /tmp/tensor-full-receiver-native-r1-public
+          destination: tensor-full-receiver-native-r1/native
+workflows:
+  tensor-full-receiver-native-r1-only:
+    jobs:
+      - tensor-full-receiver-native-r1:
+          filters:
+            branches:
+              only: edgebench-tensor-full-receiver-native-r1-20261015
