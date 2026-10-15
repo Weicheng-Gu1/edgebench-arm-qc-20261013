@@ -1,0 +1,8 @@
+{
+  "ready_for_execution": true,
+  "approved_branch": "edgebench-sealed-maxcut-v011-20261015T121647Z",
+  "one_use_nonce": "fa00b305d2872c636c6d2ecb5cd1c5df",
+  "ciphertext_sha256": "08ef7d51e50df7d89c148a7574b65f3fdbf044ae9330572c07786bd928ff2063",
+  "attempt_window_seconds": 3600,
+  "original_inner_verifier_budget_seconds": 10800
+}
