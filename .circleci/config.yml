@@ -1,0 +1,40 @@
+{
+  "version": 2.1,
+  "jobs": {
+    "halite-p2-current-native-arm": {
+      "machine": {
+        "image": "ubuntu-2404:current"
+      },
+      "resource_class": "arm.large",
+      "steps": [
+        "checkout",
+        {
+          "run": {
+            "name": "Prepare encrypted-evidence tooling",
+            "command": "python3 -m venv /tmp/halite-ci-venv\n/tmp/halite-ci-venv/bin/pip install cryptography==46.0.3"
+          }
+        },
+        {
+          "run": {
+            "name": "Build and grade unchanged current task on native ARM64",
+            "no_output_timeout": "30m",
+            "command": "timeout 1800 /tmp/halite-ci-venv/bin/python -u ci-native-arm-runner.py"
+          }
+        },
+        {
+          "store_artifacts": {
+            "path": "/tmp/halite-p2-public-evidence",
+            "destination": "halite-p2-native-arm"
+          }
+        }
+      ]
+    }
+  },
+  "workflows": {
+    "halite-p2-current-native-arm": {
+      "jobs": [
+        "halite-p2-current-native-arm"
+      ]
+    }
+  }
+}
