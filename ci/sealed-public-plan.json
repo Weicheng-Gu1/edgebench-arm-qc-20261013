@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm-two-proper-roles-one-original-fixed-control",
+  "approved_branch": "edgebench-sealed-dirichlet-gh-arm-20261015t202404z-7f243a34",
+  "one_use_environment": "edgebench-dirichlet-arm-once-20261015t202404z-7f243a34",
+  "one_use_nonce": "ebf12c354649efcea32f340517c3abe2",
+  "ciphertext_sha256": "441062398449257d3599a7f5d0a1e4d495fe292218ffc5797febc4aac70e6ef3",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
