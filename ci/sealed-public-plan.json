@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm64-two-proper-roles-one-native-full-fixed-reference",
+  "approved_branch": "edgebench-sealed-partition-armfull-20261015t234220z-56751cbf",
+  "one_use_environment": "edgebench-partition-armfull-once-20261015t234220z-56751cbf",
+  "one_use_nonce": "0d24590b960f947bdfc65e19e663e905",
+  "ciphertext_sha256": "ce8e847bbb627bf64ad4c247304dfede157fd4e1e43438d2e0312a9c9caf9a33",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
