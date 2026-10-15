@@ -16,7 +16,7 @@ jobs:
             docker version > evidence/docker-version.txt
             docker info --format '{{.Architecture}}' | tee evidence/docker-architecture.txt
             grep -Eq '^(aarch64|arm64)$' evidence/docker-architecture.txt
-            python3 - <<'PY'
+            python3 - \<<'PY'
             import pathlib
             p = pathlib.Path('/proc/sys/fs/binfmt_misc')
             entries = sorted(x.name for x in p.iterdir()) if p.exists() else []
@@ -33,7 +33,7 @@ jobs:
             test "$(docker image inspect --format '{{.Architecture}}' edgebench-arm64-smoke:local)" = arm64
             timeout 30 docker run --rm --network none --platform linux/arm64 edgebench-arm64-smoke:local | tee evidence/container-result.json
             docker image inspect alpine:3.22 > evidence/base-image-inspect.json
-            python3 - <<'PY'
+            python3 - \<<'PY'
             import json, pathlib, platform
             p = pathlib.Path('evidence')
             result = json.loads((p / 'container-result.json').read_text())
