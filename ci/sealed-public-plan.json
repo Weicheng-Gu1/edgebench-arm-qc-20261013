@@ -1,0 +1,10 @@
+{
+  "ready_for_execution": true,
+  "purpose": "two-proper-role-native-ARM-build-only-no-grade",
+  "approved_branch": "edgebench-sealed-bin-proper-role-build-20261015T165822Z",
+  "one_use_nonce": "d303073e0e432fbd940da22b2153f3a3",
+  "ciphertext_sha256": "a5d2cb548c3167e89d6decd29cd5d9bf0ada05d989cdd08ceebbab3f622d9f0b",
+  "attempt_window_seconds": 3600,
+  "original_inner_verifier_budget_seconds": 10800,
+  "mathematical_grade_will_not_run": true
+}
