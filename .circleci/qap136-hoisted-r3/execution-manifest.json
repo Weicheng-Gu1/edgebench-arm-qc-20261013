@@ -1,0 +1,92 @@
+{
+  "public_files": {
+    "circle_worker.py": {
+      "SHA256": "c621489208b4a7da649e016ba994f2a796761572f4e61417835ab9bdcda0ccc8",
+      "bytes": 8811,
+      "mode": 420
+    },
+    "crypto_action.py": {
+      "SHA256": "c03c4e438fef236b9c6186589c62856e12776d71e7b3ab15d053e9ead6c95dbc",
+      "bytes": 681,
+      "mode": 420
+    },
+    "crypto_transport.py": {
+      "SHA256": "e8d953d1082c8aa9464697533499c3f01fb7dc505caf0fc1a566a37a2066bae4",
+      "bytes": 1705,
+      "mode": 420
+    },
+    "scripts/ACTUAL-SOURCE-SET-SHA256-r1.json": {
+      "SHA256": "c5db364b72b08d59ad796a6a72dd7d624fd0ba1101e0135336975eff227023fa",
+      "bytes": 197723,
+      "mode": 420
+    },
+    "scripts/arm64-public-host-wheel-metadata-r1/public-wheel-lock-arm64.json": {
+      "SHA256": "8e7955d37789f80b144a60d880eab2a652ce78ab1f1db14739652d8bed48faa1",
+      "bytes": 110700,
+      "mode": 420
+    },
+    "scripts/arm64-public-host-wheel-metadata-r1/requirements-arm64-hashed.txt": {
+      "SHA256": "13dab6609b04bf767419aa1167f66111f3960b16ec56bf68be58674dddff672b",
+      "bytes": 9175,
+      "mode": 420
+    },
+    "scripts/build_native_arm_roles.py": {
+      "SHA256": "08ca58cbafe357d9013ccfc173a0901d5c9060ddd5f1704475d6084b40468201",
+      "bytes": 4023,
+      "mode": 420
+    },
+    "scripts/derive_arm_programless_deployment.py": {
+      "SHA256": "eba1d6ed325f6e232473207c8638e8e213804aac37af448affa5b26bb7989083",
+      "bytes": 4769,
+      "mode": 420
+    },
+    "scripts/download_locked_public_wheels.py": {
+      "SHA256": "5ac604cb961b7c02cb161648eff21059057d602a64dc81afcb92f22654e478c1",
+      "bytes": 1714,
+      "mode": 420
+    },
+    "scripts/fetch_and_verify_public_arm_wheels.py": {
+      "SHA256": "ca0564fadf99973fba97e76fe4b6309569bcf7377038de2e38e78670db84e2ff",
+      "bytes": 4854,
+      "mode": 420
+    },
+    "scripts/measure_arm_readonly.py": {
+      "SHA256": "22c0ad4ca7939c0564e4b9111fb68a8b721b1161ad6925c12cc7dbc2141dc7a1",
+      "bytes": 5290,
+      "mode": 420
+    },
+    "scripts/oci_stream_validator.py": {
+      "SHA256": "ea72a36a493ce4c1c71420f339e8bcdb4a6f0dd6a734fe608d11350aef09cf18",
+      "bytes": 3609,
+      "mode": 420
+    },
+    "scripts/preflight_circle_arm.py": {
+      "SHA256": "83f264c4dc0f63079a8be9b3e18a112a2194c38cbe07f79f3bba845d87aa9bad",
+      "bytes": 2382,
+      "mode": 420
+    },
+    "scripts/run_native_arm_lane.py": {
+      "SHA256": "3363f618307676f5b9e56af95805c910deaac5473009386f62fc90445bc7a906",
+      "bytes": 5235,
+      "mode": 420
+    },
+    "scripts/run_qap_single_multiplatform.py": {
+      "SHA256": "6115b2b15f78b8079a0d334c632dc39051c6677f27ca40db9f0506e95a1ee7da",
+      "bytes": 5532,
+      "mode": 420
+    },
+    "scripts/smoke_arm_host_imports.py": {
+      "SHA256": "5c07ad972d760f088db339b8ecc8d36f205b14b90f7b28564500ad84e4f67d54",
+      "bytes": 2795,
+      "mode": 420
+    }
+  },
+  "ciphertext": {
+    "SHA256": "7f070368b7c6253e685d6ce1bff71e8f8d1855decb30a80c340284d7524c19d4",
+    "bytes": 4850969
+  },
+  "source_AAD": "edgebench-qap136-hoisted-circle-r3/source",
+  "result_AAD_prefix": "edgebench-qap136-hoisted-circle-r3/result",
+  "source_payload_manifest_SHA256": "ca4b256d1071caa5cbbf640c52e24f3c5b467f2f4a9360d3acee65d07181e74d",
+  "candidate_main_SHA256": "adb4b97d345fd7eede03e6a4e41f8eecfee369f4252ac95e2a1056cfd61143c2"
+}

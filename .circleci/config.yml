@@ -1,0 +1,67 @@
+version: 2.1
+parameters:
+  run_native:
+    type: boolean
+    default: true
+  run_singlemulti:
+    type: boolean
+    default: false
+jobs:
+  native-arm:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Current QAP136 native ARM sample5, encrypted source and results
+          no_output_timeout: 230m
+          command: sudo --preserve-env=EDGEBENCH_QAP136_HOISTED_R3_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/qap136-hoisted-r3/circle_worker.py --lane native --work /tmp/qap136-hoisted-r3-native-work --output /tmp/qap136-hoisted-r3-native-public
+      - store_artifacts:
+          path: /tmp/qap136-hoisted-r3-native-public
+          destination: qap136-hoisted-r3/native
+  agent-singlemulti:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Agent one buildx command both platforms, full OCI stream validation
+          no_output_timeout: 65m
+          command: sudo --preserve-env=EDGEBENCH_QAP136_HOISTED_R3_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/qap136-hoisted-r3/circle_worker.py --lane agent-multi --work /tmp/qap136-hoisted-r3-agent-work --output /tmp/qap136-hoisted-r3-agent-public
+      - store_artifacts:
+          path: /tmp/qap136-hoisted-r3-agent-public
+          destination: qap136-hoisted-r3/agent-multi
+  verifier-singlemulti:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Verifier one buildx command both platforms, full OCI stream validation
+          no_output_timeout: 65m
+          command: sudo --preserve-env=EDGEBENCH_QAP136_HOISTED_R3_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/qap136-hoisted-r3/circle_worker.py --lane verifier-multi --work /tmp/qap136-hoisted-r3-verifier-work --output /tmp/qap136-hoisted-r3-verifier-public
+      - store_artifacts:
+          path: /tmp/qap136-hoisted-r3-verifier-public
+          destination: qap136-hoisted-r3/verifier-multi
+workflows:
+  current-qap-native-arm:
+    when: << pipeline.parameters.run_native >>
+    jobs:
+      - native-arm:
+          filters:
+            branches:
+              only: edgebench-qap136-hoisted-circle-r3-20261015
+  current-qap-singlemulti:
+    when: << pipeline.parameters.run_singlemulti >>
+    jobs:
+      - agent-singlemulti:
+          filters:
+            branches:
+              only: edgebench-qap136-hoisted-circle-r3-20261015
+      - verifier-singlemulti:
+          filters:
+            branches:
+              only: edgebench-qap136-hoisted-circle-r3-20261015
