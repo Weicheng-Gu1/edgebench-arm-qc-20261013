@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  tensor-v2-native:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Tensor missing-only native source-only independent control
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_TENSOR_V2_PUBLIC_TLS_CIRCLE_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/tensor-v2-tls-r2/circle_worker.py --lane native --work /tmp/tensor-v2-native-work --output /tmp/tensor-v2-native-public
+      - store_artifacts:
+          path: /tmp/tensor-v2-native-public
+          destination: tensor-v2-tls-r2/native
+workflows:
+  tensor-v2-source-native-and-singlemulti:
+    jobs:
+      - tensor-v2-native:
+          filters:
+            branches:
+              only: edgebench-tensor-v2-public-tls-native-only-20261015-r2
