@@ -1,0 +1,10 @@
+{
+  "ready_for_execution": true,
+  "purpose": "two-proper-role-native-ARM-build-only-no-grade",
+  "approved_branch": "edgebench-sealed-uniquegames-proper-role-build-20261015T174658Z",
+  "one_use_nonce": "b6210040af214cf056e2006515aa3392",
+  "ciphertext_sha256": "0d06adedff1b3fd6897338330a0817e5e8efe45b9bf1674c241b485077d50e0b",
+  "attempt_window_seconds": 3600,
+  "original_inner_verifier_budget_seconds": 21600,
+  "mathematical_grade_will_not_run": true
+}
