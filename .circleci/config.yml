@@ -1,0 +1,54 @@
+version: 2.1
+jobs:
+  native-arm64-docker-smoke:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.medium
+    steps:
+      - checkout
+      - run:
+          name: Verify native ARM64 host and Docker engine
+          command: |
+            set -euo pipefail
+            mkdir -p evidence
+            test "$(uname -m)" = aarch64
+            uname -a | tee evidence/host.txt
+            docker version > evidence/docker-version.txt
+            docker info --format '{{.Architecture}}' | tee evidence/docker-architecture.txt
+            grep -Eq '^(aarch64|arm64)$' evidence/docker-architecture.txt
+            python3 - <<'PY'
+            import pathlib
+            p = pathlib.Path('/proc/sys/fs/binfmt_misc')
+            entries = sorted(x.name for x in p.iterdir()) if p.exists() else []
+            pathlib.Path('evidence/binfmt-registrations.txt').write_text('\n'.join(entries) + '\n')
+            assert not any(x.startswith('qemu-') for x in entries), entries
+            PY
+      - run:
+          name: Build and run an ARM64 C program inside Docker
+          no_output_timeout: 5m
+          command: |
+            set -euo pipefail
+            timeout 300 docker build --pull --platform linux/arm64 -t edgebench-arm64-smoke:local . 2>&1 | tee evidence/build.log
+            docker image inspect edgebench-arm64-smoke:local > evidence/image-inspect.json
+            test "$(docker image inspect --format '{{.Architecture}}' edgebench-arm64-smoke:local)" = arm64
+            timeout 30 docker run --rm --network none --platform linux/arm64 edgebench-arm64-smoke:local | tee evidence/container-result.json
+            docker image inspect alpine:3.22 > evidence/base-image-inspect.json
+            python3 - <<'PY'
+            import json, pathlib, platform
+            p = pathlib.Path('evidence')
+            result = json.loads((p / 'container-result.json').read_text())
+            image = json.loads((p / 'image-inspect.json').read_text())[0]
+            assert result['machine'] == 'aarch64', result
+            assert result['compiled_architecture'] == 'aarch64', result
+            assert result['sum_squares'] == 333833500, result
+            report = dict(status='passed', host_architecture=platform.machine(), docker_image_architecture=image['Architecture'], image_id=image['Id'], container_result=result, scope='Generic native ARM64 Docker build/run smoke; no task image or professional grading validated.')
+            (p / 'summary.json').write_text(json.dumps(report, indent=2) + '\n')
+            print(json.dumps(report, indent=2))
+            PY
+      - store_artifacts:
+          path: evidence
+          destination: native-arm64-docker-smoke
+workflows:
+  native-arm64-docker-smoke:
+    jobs:
+      - native-arm64-docker-smoke
