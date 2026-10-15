@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-amd64-two-proper-roles-eight-original-controls",
+  "approved_branch": "edgebench-sealed-borsuk-amd8-20261015t205757z-e155170d",
+  "one_use_environment": "edgebench-borsuk-amd8-once-20261015t205757z-e155170d",
+  "one_use_nonce": "4267c8acb31dca9122320769a23599fd",
+  "ciphertext_sha256": "bb2e73987284495633d7396b9ab0947641459c4d5493d7cc8b8d58c92a52afc7",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
