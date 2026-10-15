@@ -1,0 +1,39 @@
+version: 2.1
+jobs:
+  painting-multi-agent:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Painting only one dual-platform build multi-agent
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_PAINTING_SINGLEMULTI_CIRCLE_R4_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/painting-singlemulti-r4/circle_worker.py --lane multi-agent --work /tmp/painting-singlemulti-r4-multi-agent-work --output /tmp/painting-singlemulti-r4-multi-agent-public
+      - store_artifacts:
+          path: /tmp/painting-singlemulti-r4-multi-agent-public
+          destination: painting-singlemulti-r4/multi-agent
+  painting-multi-verifier:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Painting only one dual-platform build multi-verifier
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_PAINTING_SINGLEMULTI_CIRCLE_R4_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/painting-singlemulti-r4/circle_worker.py --lane multi-verifier --work /tmp/painting-singlemulti-r4-multi-verifier-work --output /tmp/painting-singlemulti-r4-multi-verifier-public
+      - store_artifacts:
+          path: /tmp/painting-singlemulti-r4-multi-verifier-public
+          destination: painting-singlemulti-r4/multi-verifier
+workflows:
+  painting-singlemulti-host-routing:
+    jobs:
+      - painting-multi-agent:
+          filters:
+            branches:
+              only: edgebench-painting-singlemulti-circle-20261015-r4
+      - painting-multi-verifier:
+          filters:
+            branches:
+              only: edgebench-painting-singlemulti-circle-20261015-r4
