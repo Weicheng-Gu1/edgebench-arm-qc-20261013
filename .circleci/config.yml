@@ -5,35 +5,11 @@ jobs:
       image: ubuntu-2204:current
     resource_class: arm.large
     steps:
+      - checkout
       - run:
           name: Native ARM64 Docker build and isolated execution
           no_output_timeout: 4m
-          command: |
-            timeout --signal=KILL 180s python3 - <<'PY'
-            import json, platform, subprocess, pathlib, os, time, hashlib
-            out=pathlib.Path('/tmp/edgebench-circle-native-arm-probe-r1');out.mkdir(exist_ok=True)
-            rows=[]
-            def call(argv, timeout=100, data=None):
-                started=time.monotonic(); p=subprocess.run(argv,input=data,text=True,capture_output=True,timeout=timeout)
-                row={'argv':argv,'exit':p.returncode,'wall_seconds':time.monotonic()-started,'stdout':p.stdout,'stderr':p.stderr};rows.append(row)
-                (out/'commands.json').write_text(json.dumps(rows,indent=2))
-                assert p.returncode==0, str(row)
-                return p.stdout
-            host={'machine':platform.machine(),'uname':list(platform.uname()),'cpu_count':os.cpu_count()}
-            assert host['machine']=='aarch64', host
-            call(['docker','version','--format','{{json .}}'])
-            base='docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1'
-            dockerfile='FROM '+base+'\nRUN '+json.dumps(['python','-I','-c','import platform; assert platform.machine()=="aarch64"'])+'\n'
-            (out/'Dockerfile').write_text(dockerfile)
-            call(['docker','build','--platform','linux/arm64','--pull','--no-cache','-t','edgebench-circle-native-arm-probe:r1','-'],data=dockerfile)
-            info=json.loads(call(['docker','image','inspect','edgebench-circle-native-arm-probe:r1']))[0]
-            assert info['Architecture']=='arm64' and info['Os']=='linux'
-            code='import json,platform,os; assert platform.machine()=="aarch64"; print(json.dumps({"machine":platform.machine(),"uid":os.getuid(),"cpu_max":open("/sys/fs/cgroup/cpu.max").read().strip(),"memory_max":open("/sys/fs/cgroup/memory.max").read().strip()}))'
-            raw=call(['docker','run','--rm','--platform','linux/arm64','--network','none','--read-only','--user','65534:65534','--cap-drop','ALL','--security-opt','no-new-privileges','--cpus','1','--memory','256m','--memory-swap','256m','edgebench-circle-native-arm-probe:r1','python','-I','-c',code])
-            container=json.loads(raw);assert container['uid']==65534 and container['machine']=='aarch64'
-            report={'status':'PASS_NATIVE_ARM_DOCKER_BUILD_AND_EXECUTION_ONLY','host':host,'base_multiarch_digest':base,'image_id':info['Id'],'image_architecture':info['Architecture'],'container':container,'task_grading_performed':False,'model_calls':0,'Dockerfile_SHA256':hashlib.sha256(dockerfile.encode()).hexdigest(),'CircleCI_job_number':os.environ.get('CIRCLE_BUILD_NUM'),'CircleCI_job_url':os.environ.get('CIRCLE_BUILD_URL'),'CircleCI_revision':os.environ.get('CIRCLE_SHA1')}
-            (out/'report.json').write_text(json.dumps(report,indent=2));print(json.dumps(report))
-            PY
+          command: timeout --signal=KILL 180s python3 .circleci/probe_native_arm.py
       - store_artifacts:
           path: /tmp/edgebench-circle-native-arm-probe-r1
           destination: native-arm-docker-probe
