@@ -1,0 +1,243 @@
+version: 2.1
+parameters:
+  run_sealed_formal:
+    type: boolean
+    default: false
+jobs:
+  sealed-matrix-proper-roles-native-arm-build:
+    machine:
+      image: ubuntu-2204:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Public transport dependency
+          command: |
+            set +x
+            sudo apt-get update >/tmp/eb-transport-install.log 2>&1
+            sudo apt-get install -y python3-cryptography >>/tmp/eb-transport-install.log 2>&1
+            /usr/bin/python3 -c 'import json, sys, cryptography; from cryptography.hazmat.primitives.ciphers.aead import AESGCM; from cryptography.hazmat.primitives.asymmetric import padding; assert callable(AESGCM.generate_key) and callable(padding.OAEP); print(json.dumps({"python_executable": sys.executable, "python_version": sys.version.split()[0], "cryptography_version": cryptography.__version__, "AESGCM_and_OAEP_import_verified": True}))'
+      - run:
+          name: One original sealed two roles and one fixed Oracle, CircleCI background step
+          background: true
+          command: |
+            set +x
+            /usr/bin/python3 -u ci/run_sealed_control.py
+      - run:
+          name: Bounded original-control observation 1 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-1
+      - run:
+          name: Bounded original-control observation 2 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-2
+      - run:
+          name: Bounded original-control observation 3 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-3
+      - run:
+          name: Bounded original-control observation 4 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-4
+      - run:
+          name: Bounded original-control observation 5 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-5
+      - run:
+          name: Bounded original-control observation 6 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-6
+      - run:
+          name: Bounded original-control observation 7 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-7
+      - run:
+          name: Bounded original-control observation 8 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-8
+      - run:
+          name: Bounded original-control observation 9 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-9
+      - run:
+          name: Bounded original-control observation 10 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-10
+      - run:
+          name: Bounded original-control observation 11 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-11
+      - run:
+          name: Bounded original-control observation 12 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-12
+      - run:
+          name: Bounded original-control observation 13 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-13
+      - run:
+          name: Bounded original-control observation 14 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-14
+      - run:
+          name: Bounded original-control observation 15 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-15
+      - run:
+          name: Bounded original-control observation 16 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-16
+      - run:
+          name: Bounded original-control observation 17 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-17
+      - run:
+          name: Bounded original-control observation 18 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-18
+      - run:
+          name: Bounded original-control observation 19 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-19
+      - run:
+          name: Bounded original-control observation 20 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-20
+      - run:
+          name: Bounded original-control observation 21 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-21
+      - run:
+          name: Bounded original-control observation 22 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-22
+      - run:
+          name: Bounded original-control observation 23 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-23
+      - run:
+          name: Bounded original-control observation 24 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-24
+      - run:
+          name: Bounded original-control observation 25 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-25
+      - run:
+          name: Bounded original-control observation 26 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-26
+      - run:
+          name: Bounded original-control observation 27 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-27
+      - run:
+          name: Bounded original-control observation 28 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-28
+      - run:
+          name: Bounded original-control observation 29 of 29
+          no_output_timeout: 12m
+          command: /usr/bin/python3 ci/watch_existing_control_bounded.py --seconds 480 --final-preservation-step
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/checkpoint-29
+      - run:
+          name: Require original full Oracle and both native roles
+          command: /usr/bin/python3 ci/require_original_full_result.py
+      - store_artifacts:
+          path: sealed-artifacts
+          destination: sealed-native-control/final
+workflows:
+  sealed-matrix-proper-roles-native-arm-build-once:
+    when: << pipeline.parameters.run_sealed_formal >>
+    jobs:
+      - sealed-matrix-proper-roles-native-arm-build:
+          context: edgebench-one-use-matrix-proper-role-build-20261015T184852Z
+          filters:
+            branches:
+              only: /^edgebench-sealed-matrix-proper-role-build-.+$/

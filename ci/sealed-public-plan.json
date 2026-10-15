@@ -1,0 +1,10 @@
+{
+  "ready_for_execution": true,
+  "purpose": "two-proper-role-native-ARM-build-and-one-fixed-Oracle",
+  "approved_branch": "edgebench-sealed-matrix-proper-role-build-20261015T184852Z",
+  "one_use_nonce": "3d038a3e7e570961d6ca7490f95d6753",
+  "ciphertext_sha256": "a824bc98a0262fa33afca5f5f3b8897ad269bfaa50fda52b4afb01a81ef7a139",
+  "attempt_window_seconds": 14400,
+  "original_inner_verifier_budget_seconds": 10800,
+  "mathematical_grade_will_run_exactly_once": true
+}
