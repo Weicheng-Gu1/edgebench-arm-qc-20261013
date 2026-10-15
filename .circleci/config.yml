@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  native-quickjs-v004-task-qc:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Source-built frozen three-ISA task on native ARM64
+          no_output_timeout: 45m
+          command: timeout --signal=KILL 100m python3 .circleci/swe_quickjs_v004_native_arm_qc.py
+      - store_artifacts:
+          path: /tmp/swe-quickjs-v004-native-arm-public-r2
+          destination: swe-three-ISA-native-arm-qc
+workflows:
+  swe-three-ISA-native-arm-qc-r1:
+    jobs:
+      - native-quickjs-v004-task-qc:
+          filters:
+            branches:
+              only: swe-quickjs-v004-native-arm-qc-20261015-r1
