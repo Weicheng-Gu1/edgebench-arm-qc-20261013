@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm64-two-proper-roles-eight-original-controls",
+  "approved_branch": "edgebench-sealed-partition-arm8-20261015t223050z-85bc4b12",
+  "one_use_environment": "edgebench-partition-arm8-once-20261015t223050z-85bc4b12",
+  "one_use_nonce": "eade626504dfd354bd946f5002a0f486",
+  "ciphertext_sha256": "11745b258b240948f149c191cc268f51bd30771f9a14ef6c422bb2e91aa1b109",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
