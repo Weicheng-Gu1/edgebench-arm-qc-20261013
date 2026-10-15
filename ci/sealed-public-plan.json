@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm-two-proper-roles-one-original-fixed-control",
+  "approved_branch": "edgebench-sealed-matrix-gh-arm-20261015t211448z-3190f4aa",
+  "one_use_environment": "edgebench-matrix-arm-once-20261015t211448z-3190f4aa",
+  "one_use_nonce": "fa12bf90b9b8aa4fb3c7322c11b61464",
+  "ciphertext_sha256": "a0f68af41d9d0ac1cd070e2cb206acf6ed6f9eea9653766f34de8e3b35256dc8",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
