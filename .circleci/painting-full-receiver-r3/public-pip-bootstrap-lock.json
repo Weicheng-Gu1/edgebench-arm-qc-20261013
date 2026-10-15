@@ -1,0 +1,14 @@
+{
+  "kind": "edgebench-public-host-pip-bootstrap-v1",
+  "package": "pip",
+  "version": "24.0",
+  "wheel": "pip-24.0-py3-none-any.whl",
+  "url": "https://files.pythonhosted.org/packages/8a/6a/19e9fe04fca059ccf770861c7d5721ab4c2aebc539889e97c7977528a53b/pip-24.0-py3-none-any.whl",
+  "SHA256": "ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc",
+  "bytes": 2110226,
+  "primary_metadata_URL": "https://pypi.org/pypi/pip/24.0/json",
+  "primary_metadata_SHA256": "3fd3d76b2f6ee4b16b7460bed735cc93e5c351a30ff572616d3ef0f15a687021",
+  "version_source": "actual pip distribution version in original isolated QAP AMD host environment; explicit new host installer pin, original95SDK lock untouched",
+  "source_project_URL": "https://github.com/pypa/pip",
+  "wheel_scope": "pure Python pip plus vendored dependencies and their upstream licenses; not blanket relicensing"
+}
