@@ -30,6 +30,7 @@ def main():
         run([python,HERE/'derive_arm_programless_deployment.py','--source-bridge',src/'bridge','--images',images,'--output',bridge],'derive-ARM-source',timeout=90)
         lock=HERE/'arm64-public-host-wheel-metadata-r1/public-wheel-lock-arm64.json';cache=out/'public-wheel-cache'
         run([python,HERE/'download_locked_public_wheels.py','--lock',lock,'--cache',cache,'--output',out/'actual95-body-download.json'],'public-wheel-body-download',timeout=600)
+        run([python,HERE/'bootstrap_public_pip_venv.py','--python312',python,'--venv',bridge/'.venv','--lock',HERE/'public-pip-bootstrap-lock.json','--cache',out/'public-pip-cache','--output',out/'actual-full-host-pip-bootstrap.json'],'public-pip-clean-venv-bootstrap',cwd=bridge,timeout=240)
         run([python,bridge/'setup_public.py','--wheel-cache',cache,'--venv',bridge/'.venv'],'offline-clean-host-setup',cwd=bridge,timeout=600)
         py=bridge/'.venv/bin/python'
         run([py,HERE/'fetch_and_verify_public_arm_wheels.py','--lock',lock,'--cache',cache,'--output',out/'actual-wheel-metadata-closure.json'],'wheel-metadata-review',timeout=90)

@@ -1,8 +1,8 @@
 {
   "public_files": {
     "circle_worker.py": {
-      "SHA256": "c636ec0286d2f21c4a28ef7c618f7ad11d2800ed81173914b22724fca18777ba",
-      "bytes": 11245,
+      "SHA256": "5f8cdc8f8f28381c017782fa8d2dd4f73224be6de8079295462991a205845afa",
+      "bytes": 11574,
       "mode": 420
     },
     "crypto_action.py": {
@@ -66,8 +66,8 @@
       "mode": 420
     },
     "scripts/run_native_arm_lane.py": {
-      "SHA256": "3363f618307676f5b9e56af95805c910deaac5473009386f62fc90445bc7a906",
-      "bytes": 5235,
+      "SHA256": "2ddccdf2f60e6f15730dd8ba0d23777e6ed523a5c93c9ce87da3842e36e4caac",
+      "bytes": 5528,
       "mode": 420
     },
     "scripts/run_qap_single_multiplatform.py": {
@@ -78,6 +78,16 @@
     "scripts/smoke_arm_host_imports.py": {
       "SHA256": "5c07ad972d760f088db339b8ecc8d36f205b14b90f7b28564500ad84e4f67d54",
       "bytes": 2795,
+      "mode": 420
+    },
+    "scripts/bootstrap_public_pip_venv.py": {
+      "SHA256": "e6ad68560babdedd035799fdfa8e04c10190196b809138fbeca1bdd74269c886",
+      "bytes": 4027,
+      "mode": 420
+    },
+    "scripts/public-pip-bootstrap-lock.json": {
+      "SHA256": "240cdca426765130e4ebf0d547fb70f9175fd48a7d6467c35fa3ac985042076b",
+      "bytes": 878,
       "mode": 420
     }
   },

@@ -31,14 +31,14 @@ def main():
         manifest=json.loads((HERE/'execution-manifest.json').read_text())
         for n,v in manifest['public_files'].items():assert H(HERE/n)==v['SHA256']and(HERE/n).stat().st_size==v['bytes']and not(HERE/n).is_symlink()
         assert H(HERE/'payload.aesgcm')==manifest['ciphertext']['SHA256']
-        status['stage']='verify_preinstalled_CPython312_venv_ensurepip_pip';status['python_candidates_checked']=[];public_status()
+        status['stage']='verify_preinstalled_CPython312_stdlib_venv_no_pip';status['python_candidates_checked']=[];public_status()
         bases=[]
         try:bases.append(Path(pwd.getpwnam('circleci').pw_dir)/'.pyenv/versions')
         except KeyError:pass
         bases.extend([Path.home()/'.pyenv/versions',Path('/opt/circleci/.pyenv/versions')])
         candidates=[q for base in bases for q in sorted(base.glob('3.12*/bin/python3.12'),reverse=True)]+[shutil.which('python3.12')]
         seen=set()
-        check_code="import sys,json,venv,ensurepip,tempfile,pathlib,subprocess;assert sys.version_info[:2]==(3,12);td=tempfile.TemporaryDirectory(prefix='qap-venv-prerequisite-');v=pathlib.Path(td.name)/'venv';venv.create(v,with_pip=True);r=subprocess.run([str(v/'bin/python'),'-I','-m','pip','--version'],capture_output=True,text=True);assert r.returncode==0;print(json.dumps({'version':list(sys.version_info[:3]),'ensurepip_bundled_version':ensurepip.version(),'clean_venv_pip':r.stdout.strip()}));td.cleanup()"
+        check_code='import sys,json,venv,ssl,tempfile,pathlib,subprocess;assert sys.version_info[:2]==(3,12);td=tempfile.TemporaryDirectory(prefix=\'qap-venv-prerequisite-\');v=pathlib.Path(td.name)/\'venv\';venv.create(v,with_pip=False);r=subprocess.run([str(v/\'bin/python\'),\'-I\',\'-c\',\'import sys,importlib.util;assert sys.version_info[:2]==(3,12);assert importlib.util.find_spec("pip")is None;print(sys.executable)\'],capture_output=True,text=True);assert r.returncode==0;print(json.dumps({\'version\':list(sys.version_info[:3]),\'stdlib_clean_venv_without_ensurepip\':True}));td.cleanup()'
         for q in candidates:
             if not q:continue
             q=Path(q).resolve()
@@ -46,10 +46,10 @@ def main():
             seen.add(str(q))
             test=subprocess.run([str(q),'-I','-c',check_code],env=cleanenv,capture_output=True,timeout=120)
             index=len(status['python_candidates_checked']);(work/('python-candidate-'+str(index)+'.stdout')).write_bytes(test.stdout);(work/('python-candidate-'+str(index)+'.stderr')).write_bytes(test.stderr)
-            status['python_candidates_checked'].append({'path':str(q),'fixed_check':'offline_clean_venv_ensurepip_pip','exit':test.returncode,'stderr_SHA256':hashlib.sha256(test.stderr).hexdigest(),'stderr_bytes':len(test.stderr)})
+            status['python_candidates_checked'].append({'path':str(q),'fixed_check':'offline_stdlib_venv_without_ensurepip','exit':test.returncode,'stderr_SHA256':hashlib.sha256(test.stderr).hexdigest(),'stderr_bytes':len(test.stderr)})
             public_status()
             if test.returncode==0:current_python=q;break
-        assert current_python is not None,'HOLD_no_verified_preinstalled_CPython312_with_clean_venv_ensurepip_pip'
+        assert current_python is not None,'HOLD_no_verified_preinstalled_CPython312_with_stdlib_venv'
         status['stage']='actual_resource_preflight';run([current_python,HERE/'scripts/preflight_circle_arm.py','--python312',current_python,'--output',work/'prerequisite.json'],'actual-preflight',timeout=90)
         # Three public wheels are enough for the authenticated decryptor. The full95 SDK
         # remains a separate real offline install/import gate inside the native lane.
@@ -63,7 +63,7 @@ def main():
             assert len(data)==row['size']and hashlib.sha256(data).hexdigest()==row['sha256'];(cache/row['wheel']).write_bytes(data)
             requirements.append(row['package']+'=='+row['version']+' --hash=sha256:'+row['sha256'])
         req=work/'crypto-public-requirements.txt';req.write_text('\n'.join(requirements)+'\n')
-        run([current_python,'-m','venv',work/'crypto-venv'],'clean-crypto-venv',timeout=120);crypto_python=work/'crypto-venv/bin/python'
+        run([current_python,HERE/'scripts/bootstrap_public_pip_venv.py','--python312',current_python,'--venv',work/'crypto-venv','--lock',HERE/'scripts/public-pip-bootstrap-lock.json','--cache',work/'pip-public-cache','--output',work/'actual-crypto-pip-bootstrap.json'],'locked-public-pip-crypto-venv-bootstrap',timeout=240);crypto_python=work/'crypto-venv/bin/python'
         run([crypto_python,'-m','pip','install','--no-index','--find-links',cache,'--require-hashes','-r',req],'locked-public-crypto-install',timeout=180)
         run([crypto_python,'-m','pip','check'],'crypto-pip-check',timeout=30)
         # stdlib worker imports cryptography only through this isolated exact interpreter.
@@ -84,7 +84,7 @@ def main():
         public_status()
         # Select ordinary small raw evidence; never include source task/venvs/wheels,
         # live filesystem images, OCI or keys. Preserve failure logs as well as success.
-        forbidden={'.venv','crypto-venv','public-wheel-cache','crypto-public-wheels','decrypted','framework'}
+        forbidden={'.venv','crypto-venv','public-wheel-cache','crypto-public-wheels','pip-public-cache','decrypted','framework'}
         for f in work.rglob('*'):
             if not f.is_file()or f.is_symlink()or selected in f.parents:continue
             rel=f.relative_to(work)
