@@ -1,0 +1,77 @@
+{
+  "encrypted_sha256": "fcde815594b5ac95840d97dd3b8bf4fed6dd64d9af641e14197578afba9c1f07",
+  "plaintext_sha256": "efac0171db5ae62766065ec617f00b5e2e3ac850a2bd69d66efbebc675f95abe",
+  "key_env": "DMC_NATIVE_QC_20261015_V1",
+  "chunks": [
+    {
+      "name": "payload-000.enc",
+      "bytes": 12582912,
+      "sha256": "307db098ef9bcaec4b1bcaea4e7ecce5c96872078b2768d243fa46029206c78e"
+    },
+    {
+      "name": "payload-001.enc",
+      "bytes": 12582912,
+      "sha256": "3f083f5f186086c9e04f704afafce974b82bb004180a7139357127051bc64445"
+    },
+    {
+      "name": "payload-002.enc",
+      "bytes": 12582912,
+      "sha256": "ac9d79439f2492bde076c04a7064c8cb9daa0ac49550b4a5a1f26cb877076177"
+    },
+    {
+      "name": "payload-003.enc",
+      "bytes": 12582912,
+      "sha256": "d09e4bb621de3e16443077b669d7e7261612cca045cbe6b81c466beb6fa4f392"
+    },
+    {
+      "name": "payload-004.enc",
+      "bytes": 12582912,
+      "sha256": "8786f8a822423af25e84992edd1a911da1d6b2b74ed57af8d8e33f6eeb70d4aa"
+    },
+    {
+      "name": "payload-005.enc",
+      "bytes": 12582912,
+      "sha256": "7348474b70e9acc04f9006258eb6f4bd25c6cca7c982bdec576a72bd6074c70b"
+    },
+    {
+      "name": "payload-006.enc",
+      "bytes": 12582912,
+      "sha256": "1dccab06b71a6ef9a2255ef0896360f93b1ccbb86c242c3290ffdc0eed855216"
+    },
+    {
+      "name": "payload-007.enc",
+      "bytes": 12582912,
+      "sha256": "39d805d40718d228a410cc9ff6150d4477435a0e8b2e6a12192d132b6b4cd5b3"
+    },
+    {
+      "name": "payload-008.enc",
+      "bytes": 12582912,
+      "sha256": "a09c235527a051bdc617ec725d49fa949a6dd16ef82a5fedda4506464ae724fd"
+    },
+    {
+      "name": "payload-009.enc",
+      "bytes": 12582912,
+      "sha256": "b2db264b5ffc9d4ba9d916ab89c01fb33fca22bb8c6ad90db65d996b5412f23b"
+    },
+    {
+      "name": "payload-010.enc",
+      "bytes": 12582912,
+      "sha256": "11c6065b01b86bec368f0bea83732bca527b2f9e481f01eb6642a8d8270c8faf"
+    },
+    {
+      "name": "payload-011.enc",
+      "bytes": 12582912,
+      "sha256": "5508f198162c974bae69a96e33d428d832e69d9e9f8a9528d5d8d8cbb159b766"
+    },
+    {
+      "name": "payload-012.enc",
+      "bytes": 12582912,
+      "sha256": "3ba1eb0f8b508ea34a43ef2797da65766a93ab2b24240f216c2281d8c1acd44c"
+    },
+    {
+      "name": "payload-013.enc",
+      "bytes": 11184800,
+      "sha256": "40dbac2c9c66aa06c11cf5a2f3f29851b73fab6571f1ec464c08bd6d32b16f77"
+    }
+  ]
+}
