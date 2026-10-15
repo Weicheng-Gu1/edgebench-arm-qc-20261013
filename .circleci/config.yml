@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  native-arm-current-best:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: ESA current final three plans and fixed reference native ARM
+          no_output_timeout: 125m
+          command: sudo --preserve-env=EDGEBENCH_ESA_CURRENT_BEST_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/esa-current-best-r1/circle_worker.py --lane native --work /tmp/esa-current-best-r1-work --output /tmp/esa-current-best-r1-public
+      - store_artifacts:
+          path: /tmp/esa-current-best-r1-public
+          destination: esa-current-best-r1/native
+workflows:
+  esa-current-best-native-arm:
+    jobs:
+      - native-arm-current-best:
+          filters:
+            branches:
+              only: edgebench-esa-current-best-circle-20261015-r1
