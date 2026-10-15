@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  painting-native-arm:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Painting own sourcebound native ARM reference NOP and two positive partials
+          no_output_timeout: 120m
+          command: sudo --preserve-env=EDGEBENCH_PAINTING_NATIVE_ARM_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/painting-native-arm-r1/circle_worker.py --lane native --work /tmp/painting-native-work --output /tmp/painting-native-public
+      - store_artifacts:
+          path: /tmp/painting-native-public
+          destination: painting-native-arm-r1/native
+workflows:
+  painting-native-arm-only:
+    jobs:
+      - painting-native-arm:
+          filters:
+            branches:
+              only: edgebench-painting-native-arm-circle-20261015-r1
