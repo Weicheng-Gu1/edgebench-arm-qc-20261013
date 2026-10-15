@@ -1,5 +1,6 @@
 from pathlib import Path
 import hashlib,json,os,subprocess,tarfile,traceback,signal
+os.umask(0o022)
 ROOT=Path('/ci');ROOT.mkdir(exist_ok=True);O=ROOT/'artifact';O.mkdir(exist_ok=True)
 M=json.loads(Path('ci/transport.json').read_text());H=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();status=1
 def run_owned(command,filename,timeout):
