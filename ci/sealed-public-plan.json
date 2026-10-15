@@ -1,0 +1,10 @@
+{
+  "ready_for_execution": true,
+  "purpose": "two-proper-role-native-ARM-build-and-one-fixed-Oracle",
+  "approved_branch": "edgebench-sealed-borsuk-proper-role-build-20261015T193950Z",
+  "one_use_nonce": "d7afb606bda6ccaeee0d10501fcfc540",
+  "ciphertext_sha256": "de06d2974fab6d408e3e400faa10c44cc654c5e3534927e9ac80e74784ef1c43",
+  "attempt_window_seconds": 14400,
+  "original_inner_verifier_budget_seconds": 21600,
+  "mathematical_grade_will_run_exactly_once": true
+}
