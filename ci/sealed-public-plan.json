@@ -1,0 +1,10 @@
+{
+  "ready_for_execution": true,
+  "purpose": "two-proper-role-native-ARM-build-and-one-fixed-Oracle",
+  "approved_branch": "edgebench-sealed-uniquegames-proper-role-build-20261015T191137Z",
+  "one_use_nonce": "8f85c6fe1b7f0120f8b82e6d47bc722a",
+  "ciphertext_sha256": "b5f16d839802772bd9507c1284b66fcdf3d74c6394a9e173bafe6b8d24c0675c",
+  "attempt_window_seconds": 14400,
+  "original_inner_verifier_budget_seconds": 21600,
+  "mathematical_grade_will_run_exactly_once": true
+}
