@@ -1,0 +1,10 @@
+{
+  "ready_for_execution": true,
+  "purpose": "two-proper-role-native-ARM-build-and-one-fixed-Oracle",
+  "approved_branch": "edgebench-sealed-matrix-pregrade-probe240-reentry-20261015T200352Z",
+  "one_use_nonce": "00efdda80cd30ab09007bce26c4613aa",
+  "ciphertext_sha256": "8dbca743b1989c67ee88ca23549652e1e75b9e08af97a4e3aea899e894348cda",
+  "attempt_window_seconds": 14400,
+  "original_inner_verifier_budget_seconds": 10800,
+  "mathematical_grade_will_run_exactly_once": true
+}
