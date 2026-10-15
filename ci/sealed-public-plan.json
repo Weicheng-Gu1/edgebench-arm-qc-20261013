@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm-current-Hard-proper-roles-original-unattempted-posthoc-batch",
+  "approved_branch": "edgebench-sealed-hard-posthoc-gh-arm-20261015t212026z-137d11fb",
+  "one_use_environment": "edgebench-hard-posthoc-arm-once-20261015t212026z-137d11fb",
+  "one_use_nonce": "2b402716a3026ce2054f63e39cd9ba2c",
+  "ciphertext_sha256": "d0869ab5aaae20e606045c1612e1584d79984dac2bc7307206906c17764acf11",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
