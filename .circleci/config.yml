@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  native-arm64-docker-pilot:
+    machine:
+      image: ubuntu-2204:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Native ARM64 machine and pinned Docker execution (no model)
+          no_output_timeout: 5m
+          command: timeout --signal=TERM --kill-after=15s 540 bash ci/native-arm64-pilot.sh
+      - store_artifacts:
+          path: evidence
+          destination: native-arm64-pilot
+workflows:
+  native-arm64-pilot-once:
+    jobs:
+      - native-arm64-docker-pilot:
+          filters:
+            branches:
+              only: edgebench-native-arm64-pilot-20261015T082001Z
