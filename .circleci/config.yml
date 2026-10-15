@@ -1,0 +1,56 @@
+version: 2.1
+jobs:
+  spaceship-native-arm:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Spaceship native sourcebound free verification
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_SPACESHIP_NATIVE_MULTI_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/spaceship-native-multi-r1/circle_worker.py --lane native --work /tmp/spaceship-native-work --output /tmp/spaceship-native-public
+      - store_artifacts:
+          path: /tmp/spaceship-native-public
+          destination: spaceship-native-multi-r1/native
+  spaceship-multi-agent:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: xlarge
+    steps:
+      - checkout
+      - run:
+          name: Spaceship multi-agent sourcebound free verification
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_SPACESHIP_NATIVE_MULTI_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/spaceship-native-multi-r1/circle_worker.py --lane multi-agent --work /tmp/spaceship-multi-agent-work --output /tmp/spaceship-multi-agent-public
+      - store_artifacts:
+          path: /tmp/spaceship-multi-agent-public
+          destination: spaceship-native-multi-r1/multi-agent
+  spaceship-multi-verifier:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: xlarge
+    steps:
+      - checkout
+      - run:
+          name: Spaceship multi-verifier sourcebound free verification
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_SPACESHIP_NATIVE_MULTI_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/spaceship-native-multi-r1/circle_worker.py --lane multi-verifier --work /tmp/spaceship-multi-verifier-work --output /tmp/spaceship-multi-verifier-public
+      - store_artifacts:
+          path: /tmp/spaceship-multi-verifier-public
+          destination: spaceship-native-multi-r1/multi-verifier
+workflows:
+  spaceship-native-and-public-multi:
+    jobs:
+      - spaceship-native-arm:
+          filters:
+            branches:
+              only: edgebench-spaceship-native-multi-circle-20261015-r1
+      - spaceship-multi-agent:
+          filters:
+            branches:
+              only: edgebench-spaceship-native-multi-circle-20261015-r1
+      - spaceship-multi-verifier:
+          filters:
+            branches:
+              only: edgebench-spaceship-native-multi-circle-20261015-r1
