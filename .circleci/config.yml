@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  spaceship-full-receiver-native-r2:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Spaceship public receiver native ARM source-specific R5 and full native/periodic Spaceship controls
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_SPACESHIP_FULL_RECEIVER_NATIVE_R2_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/spaceship-full-receiver-native-r2/circle_worker.py --lane native --work /tmp/spaceship-full-receiver-native-r2-work --output /tmp/spaceship-full-receiver-native-r2-public
+      - store_artifacts:
+          path: /tmp/spaceship-full-receiver-native-r2-public
+          destination: spaceship-full-receiver-native-r2/native
+workflows:
+  spaceship-full-receiver-native-r2-only:
+    jobs:
+      - spaceship-full-receiver-native-r2:
+          filters:
+            branches:
+              only: edgebench-spaceship-full-receiver-native-r2-20261015
