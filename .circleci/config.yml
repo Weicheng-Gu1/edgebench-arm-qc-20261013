@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  painting-multi-agent:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: xlarge
+    steps:
+      - checkout
+      - run:
+          name: Painting agent one dual build native AMD host and ARM emulation
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_PAINTING_AGENT_MULTI_AMD_CIRCLE_R5_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/painting-agent-multi-amd-r5/circle_worker.py --lane multi-agent --work /tmp/painting-agent-multi-amd-r5-work --output /tmp/painting-agent-multi-amd-r5-public
+      - store_artifacts:
+          path: /tmp/painting-agent-multi-amd-r5-public
+          destination: painting-agent-multi-amd-r5/multi-agent
+workflows:
+  painting-agent-singlemulti-native-amd:
+    jobs:
+      - painting-multi-agent:
+          filters:
+            branches:
+              only: edgebench-painting-agent-multi-native-amd-circle-20261015-r5
