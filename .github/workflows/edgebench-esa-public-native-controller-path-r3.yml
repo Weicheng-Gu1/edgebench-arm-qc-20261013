@@ -1,63 +1,219 @@
-name: ESA same-source native dualarch complete controller path r3
-on:
+name: One sealed native ARM original-input posthoc batch
+'on':
   workflow_dispatch:
+    inputs:
+      run_sealed_formal:
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
+concurrency:
+  group: sealed-dirichlet-own-once-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
-  native-public:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: amd64
-            machine: x86_64
-            runner: ubuntu-24.04
-          - arch: arm64
-            machine: aarch64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 180
+  one-sealed-control:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_sealed_formal }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 360
+    environment: edgebench-hard-first3-posthoc-arm-once-20261015t220342z-329174b5
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Checkout exact dispatched revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Fetch exact public host dependencies only
+          fetch-depth: 1
+      - name: Prepare explicit system Python cryptography
+        timeout-minutes: 15
         run: |
           set -euo pipefail
-          curl --fail --location --retry 3 --output public-host-dependencies.zip 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/esa-public-native-singlemulti-r1-20261015/esa-complete-controller-hostdeps-r1.zip'
-          echo '1eda272936455c2f9689cf37a8378841f2177592daea759466df3b26e9c6dd2d  public-host-dependencies.zip' | sha256sum --check -
-          mkdir public-host-dependencies
-          unzip -q public-host-dependencies.zip -d public-host-dependencies
-          /usr/bin/python3 -m pip install --no-index --find-links public-host-dependencies/common --find-links public-host-dependencies/${{ matrix.arch }} --require-hashes --target /tmp/esa-public-host-deps -r public-host-dependencies/requirements-${{ matrix.arch }}.txt
-      - name: Decrypt exact source and private control plans
+          sudo apt-get update
+          sudo apt-get install -y python3-cryptography
+          /usr/bin/python3 -c 'import cryptography; from cryptography.hazmat.primitives.ciphers.aead import AESGCM; from cryptography.hazmat.primitives.asymmetric import padding; print("explicit-system-crypto-ok", cryptography.__version__)'
+      - name: Start one sealed control and confirm original payload loaded
+        timeout-minutes: 3
         env:
-          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_ESA_PUBLIC_NATIVE_MATRIX_R1_TRANSPORT_KEY }}
-        run: |
-          set -euo pipefail
-          curl --fail --location --retry 3 --output payload.aesgcm 'https://github.com/Weicheng-Gu1/edgebench-arm-qc-20261013/releases/download/esa-public-native-singlemulti-r1-20261015/esa-public-native-singlemulti-r1-20261015-payload.aesgcm'
-          echo '4dfbc872bea2f97f8101c8b46f65fc4cc8018fcf8f4097a0d444aee1a4264487  payload.aesgcm' | sha256sum --check -
-          PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 crypto_esa_public_native_matrix_r1.py decrypt payload.aesgcm decoded
-          chmod 700 decoded
-          echo '0b4755b8b39e08aaec604e55f4ad80997e570214790337168181e5e8687cb0c7  decoded/payload/source-esa-public-runtime-r1.tar.gz' | sha256sum --check -
-      - name: Native cold build both roles and original ESA score controls
-        run: |
-          set -euo pipefail
-          test "$(uname -m)" = '${{ matrix.machine }}'
-          mkdir -p evidence
-          sudo -n env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="/tmp/esa-public-host-deps:${GITHUB_WORKSPACE}/evidence/native/runtime/component" /usr/bin/python3 -B decoded/payload/scripts/run_native_build_and_controls.py --payload decoded/payload --output evidence/native --arch '${{ matrix.arch }}' > evidence/controller.log 2>&1
-      - name: Encrypt exact raw evidence including failures
-        if: always()
-        env:
-          EDGEBENCH_TRANSPORT_KEY: ${{ secrets.EDGEBENCH_ESA_PUBLIC_NATIVE_MATRIX_R1_TRANSPORT_KEY }}
-        run: |
-          mkdir -p evidence
-          sudo -n env EDGEBENCH_TRANSPORT_KEY="$EDGEBENCH_TRANSPORT_KEY" PYTHONPATH=/tmp/esa-public-host-deps /usr/bin/python3 crypto_esa_public_native_matrix_r1.py encrypt evidence evidence.aesgcm
-          sudo chown "$(id -u):$(id -g)" evidence.aesgcm
-      - name: Retain encrypted raw evidence
-        if: always()
+          EB_PAYLOAD_KEY_B64: ${{ secrets.EB_PAYLOAD_KEY_B64 }}
+          EB_APPROVED_REVISION: ${{ secrets.EB_APPROVED_REVISION }}
+          EB_ONE_USE_NONCE: ${{ secrets.EB_ONE_USE_NONCE }}
+        run: /usr/bin/python3 -u ci/run_sealed_control.py
+      - name: Observe original control window 01
+        if: ${{ always() }}
+        id: window01
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 01
+        if: ${{ always() && steps.window01.outputs.upload == 'true' }}
+        timeout-minutes: 3
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: edgebench-esa-public-native-r1-${{ matrix.arch }}-encrypted
-          path: evidence.aesgcm
-          if-no-files-found: error
+          name: sealed-original-checkpoint-01-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
           retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 02
+        if: ${{ always() }}
+        id: window02
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 02
+        if: ${{ always() && steps.window02.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-02-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 03
+        if: ${{ always() }}
+        id: window03
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 03
+        if: ${{ always() && steps.window03.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-03-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 04
+        if: ${{ always() }}
+        id: window04
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 04
+        if: ${{ always() && steps.window04.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-04-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 05
+        if: ${{ always() }}
+        id: window05
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 05
+        if: ${{ always() && steps.window05.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-05-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 06
+        if: ${{ always() }}
+        id: window06
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 06
+        if: ${{ always() && steps.window06.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-06-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 07
+        if: ${{ always() }}
+        id: window07
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 07
+        if: ${{ always() && steps.window07.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-07-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 08
+        if: ${{ always() }}
+        id: window08
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 08
+        if: ${{ always() && steps.window08.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-08-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 09
+        if: ${{ always() }}
+        id: window09
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 09
+        if: ${{ always() && steps.window09.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-09-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 10
+        if: ${{ always() }}
+        id: window10
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 10
+        if: ${{ always() && steps.window10.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-10-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Observe original control window 11
+        if: ${{ always() }}
+        id: window11
+        timeout-minutes: 32
+        run: /usr/bin/python3 -u ci/watch_existing_control_bounded.py --max-seconds 1800
+      - name: Upload authenticated ciphertext checkpoint 11
+        if: ${{ always() && steps.window11.outputs.upload == 'true' }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-checkpoint-11-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn
+      - name: Require completed original posthoc batch and exact own cleanup
+        if: ${{ always() }}
+        timeout-minutes: 11
+        run: /usr/bin/python3 -u ci/require_original_full_result.py
+      - name: Preserve final authenticated ciphertext
+        if: ${{ always() }}
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sealed-original-final-${{ github.run_id }}
+          path: sealed-artifacts/*.enc
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: warn

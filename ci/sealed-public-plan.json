@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm-current-Hard-first-three-terminal-original-posthoc-batch",
+  "approved_branch": "edgebench-sealed-hard-first3-posthoc-gh-arm-20261015t220342z-329174b5",
+  "one_use_environment": "edgebench-hard-first3-posthoc-arm-once-20261015t220342z-329174b5",
+  "one_use_nonce": "0b2c5954f38d533b4d0c858580ed7afd",
+  "ciphertext_sha256": "ab1c95450f8ebe7f168c515d6132907f31fd4536ae11d95da46bfc2705a4cb1b",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
