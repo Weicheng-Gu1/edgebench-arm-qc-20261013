@@ -1,0 +1,8 @@
+{
+  "ready_for_execution": true,
+  "approved_branch": "edgebench-sealed-matrix-v003-20261015T095405Z",
+  "one_use_nonce": "76d4c1e370858fed6b00e80ea3b6761e",
+  "ciphertext_sha256": "31e1561b3f9978a7d3eb21240b4d2bedb5c83a1273b08fd122c75601ddb9b72b",
+  "attempt_window_seconds": 3600,
+  "original_inner_verifier_budget_seconds": 10800
+}
