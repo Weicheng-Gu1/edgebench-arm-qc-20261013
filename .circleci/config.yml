@@ -1,0 +1,56 @@
+version: 2.1
+jobs:
+  music-v1-native:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Music v1 source-bound native no model
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_MUSIC_V1_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/music-v1-r1/circle_worker.py --lane native --work /tmp/music-v1-r1-native-work --output /tmp/music-v1-r1-native-public
+      - store_artifacts:
+          path: /tmp/music-v1-r1-native-public
+          destination: music-v1-r1/native
+  music-v1-multi-agent:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Music v1 source-bound multi-agent no model
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_MUSIC_V1_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/music-v1-r1/circle_worker.py --lane multi-agent --work /tmp/music-v1-r1-multi-agent-work --output /tmp/music-v1-r1-multi-agent-public
+      - store_artifacts:
+          path: /tmp/music-v1-r1-multi-agent-public
+          destination: music-v1-r1/multi-agent
+  music-v1-multi-verifier:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Music v1 source-bound multi-verifier no model
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_MUSIC_V1_CIRCLE_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/music-v1-r1/circle_worker.py --lane multi-verifier --work /tmp/music-v1-r1-multi-verifier-work --output /tmp/music-v1-r1-multi-verifier-public
+      - store_artifacts:
+          path: /tmp/music-v1-r1-multi-verifier-public
+          destination: music-v1-r1/multi-verifier
+workflows:
+  music-v1-public-native-and-singlemulti:
+    jobs:
+      - music-v1-native:
+          filters:
+            branches:
+              only: edgebench-music-v1-public-circle-20261015-r1
+      - music-v1-multi-agent:
+          filters:
+            branches:
+              only: edgebench-music-v1-public-circle-20261015-r1
+      - music-v1-multi-verifier:
+          filters:
+            branches:
+              only: edgebench-music-v1-public-circle-20261015-r1

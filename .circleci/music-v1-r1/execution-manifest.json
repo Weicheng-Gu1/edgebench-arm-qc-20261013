@@ -1,0 +1,58 @@
+{
+  "public_files": {
+    "crypto_transport.py": {
+      "SHA256": "6a1b91854e02d2f4d7109fe725050bb461065fa1a3b1a820e440a492a5b35ba9",
+      "bytes": 2040,
+      "mode": 420
+    },
+    "public-pip-bootstrap-lock.json": {
+      "SHA256": "240cdca426765130e4ebf0d547fb70f9175fd48a7d6467c35fa3ac985042076b",
+      "bytes": 878,
+      "mode": 420
+    },
+    "bootstrap_public_pip_venv.py": {
+      "SHA256": "e6ad68560babdedd035799fdfa8e04c10190196b809138fbeca1bdd74269c886",
+      "bytes": 4027,
+      "mode": 420
+    },
+    "crypto-wheel-lock-amd64.json": {
+      "SHA256": "e45ad71863ddf6216e7d2399641b18d33e93cade12eaba5538747f9dae80740d",
+      "bytes": 1377,
+      "mode": 420
+    },
+    "crypto_action.py": {
+      "SHA256": "18271d485e5213e6674171dbc7216522e55d386314d66398d97708c3bdaeefb1",
+      "bytes": 749,
+      "mode": 420
+    },
+    "crypto-wheel-lock-arm64.json": {
+      "SHA256": "cd26ce66b8bcd43b5b5432c822c96005b8f48e223d3cdccb9c8fdca458d8c438",
+      "bytes": 1376,
+      "mode": 420
+    },
+    "circle_worker.py": {
+      "SHA256": "e968b1a484ad5d79b0a2e68ccda5c3a5c85369793e26b7646c4c4954d9641c60",
+      "bytes": 11911,
+      "mode": 420
+    },
+    "preflight_circle_machine.py": {
+      "SHA256": "274bd34720ed3dc61639209f12010296554c2926ae088abdfd00c057c8eac54b",
+      "bytes": 2512,
+      "mode": 420
+    }
+  },
+  "ciphertext": {
+    "SHA256": "573c6f5c91e27c91d2e09b6626f67f8896d79d2f39b3cd637937c037c2bd5dff",
+    "bytes": 3066915
+  },
+  "source_AAD": "edgebench-music-v1-public-circle-r1/source",
+  "result_AAD_prefix": "edgebench-music-v1-public-circle-r1/result",
+  "source_payload_manifest_SHA256": "58df3df677d0fc25fa500bf47da66e2a518cedbe31fe8160329060f77b19881c",
+  "reviewed_source_archive_SHA256": "15bf299e41c6e4040ebcbb8b1dadbe5802129ed51a81357eae6b35624205813c",
+  "model_calls": 0,
+  "lanes": [
+    "native",
+    "multi-agent",
+    "multi-verifier"
+  ]
+}
