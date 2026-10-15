@@ -1,0 +1,12 @@
+{
+  "ready_for_execution": true,
+  "purpose": "native-arm-two-proper-roles-four-original-posthoc-inputs",
+  "approved_branch": "edgebench-sealed-bin-four-gh-arm-20261015t210308z-e76517ab",
+  "one_use_environment": "edgebench-bin-four-arm-once-20261015t210308z-e76517ab",
+  "one_use_nonce": "a33ddce504a4940f9a8a0d9ac154db59",
+  "ciphertext_sha256": "290623711ccc3a8b821bf8696aff0c679e413385ebda5a7d8fcc3318e70ffa6d",
+  "attempt_window_seconds": 19800,
+  "provider_job_cap_seconds": 21600,
+  "minimum_free_disk_bytes": 12884901888,
+  "one_formal_job_only": true
+}
