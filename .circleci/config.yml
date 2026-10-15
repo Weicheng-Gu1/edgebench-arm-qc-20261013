@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  native-av1-task-qc:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Source-built frozen AV1 task on native ARM64
+          no_output_timeout: 45m
+          command: timeout --signal=KILL 100m python3 .circleci/swe_av1_native_arm_qc.py
+      - store_artifacts:
+          path: /tmp/swe-av1-native-arm-public-r1
+          destination: swe-av1-native-arm-qc
+workflows:
+  swe-av1-native-arm-qc-r1:
+    jobs:
+      - native-av1-task-qc:
+          filters:
+            branches:
+              only: swe-av1-native-arm-qc-20261015-r1
