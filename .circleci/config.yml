@@ -9,7 +9,7 @@ parameters:
 jobs:
   native-arm:
     machine:
-      image: ubuntu-2204:current
+      image: ubuntu-2404:2026.05.1
     resource_class: arm.large
     steps:
       - checkout
@@ -22,7 +22,7 @@ jobs:
           destination: qap136-hoisted-r3/native
   agent-singlemulti:
     machine:
-      image: ubuntu-2204:current
+      image: ubuntu-2404:2026.05.1
     resource_class: arm.large
     steps:
       - checkout
@@ -35,7 +35,7 @@ jobs:
           destination: qap136-hoisted-r3/agent-multi
   verifier-singlemulti:
     machine:
-      image: ubuntu-2204:current
+      image: ubuntu-2404:2026.05.1
     resource_class: arm.large
     steps:
       - checkout
