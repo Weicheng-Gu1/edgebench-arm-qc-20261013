@@ -1,0 +1,109 @@
+{
+  "version": 2.1,
+  "jobs": {
+    "validate-amd64": {
+      "parameters": {
+        "task": {
+          "type": "string"
+        }
+      },
+      "machine": {
+        "image": "ubuntu-2204:current"
+      },
+      "resource_class": "large",
+      "steps": [
+        "checkout",
+        {
+          "run": {
+            "name": "Install public encryption library",
+            "command": "python3 -m pip install --quiet cryptography==44.0.3"
+          }
+        },
+        {
+          "run": {
+            "name": "Clean public build and complete saved-submission validation",
+            "no_output_timeout": "90m",
+            "command": "python3 .circleci/tb8_validate.py \"<< parameters.task >>\" amd64"
+          }
+        },
+        {
+          "store_artifacts": {
+            "path": "/tmp/tb8-ci-public",
+            "destination": "tb8-amd64"
+          }
+        }
+      ]
+    },
+    "validate-arm64": {
+      "parameters": {
+        "task": {
+          "type": "string"
+        }
+      },
+      "machine": {
+        "image": "ubuntu-2204:current"
+      },
+      "resource_class": "arm.large",
+      "steps": [
+        "checkout",
+        {
+          "run": {
+            "name": "Install public encryption library",
+            "command": "python3 -m pip install --quiet cryptography==44.0.3"
+          }
+        },
+        {
+          "run": {
+            "name": "Clean public build and complete saved-submission validation",
+            "no_output_timeout": "90m",
+            "command": "python3 .circleci/tb8_validate.py \"<< parameters.task >>\" arm64"
+          }
+        },
+        {
+          "store_artifacts": {
+            "path": "/tmp/tb8-ci-public",
+            "destination": "tb8-arm64"
+          }
+        }
+      ]
+    }
+  },
+  "workflows": {
+    "tb8-public-validation": {
+      "jobs": [
+        {
+          "validate-amd64": {
+            "matrix": {
+              "parameters": {
+                "task": [
+                  "sqlmesh-retained-history-restatement"
+                ]
+              }
+            },
+            "filters": {
+              "branches": {
+                "only": "tb21-delivery-v3-public-20261016"
+              }
+            }
+          }
+        },
+        {
+          "validate-arm64": {
+            "matrix": {
+              "parameters": {
+                "task": [
+                  "sqlmesh-retained-history-restatement"
+                ]
+              }
+            },
+            "filters": {
+              "branches": {
+                "only": "tb21-delivery-v3-public-20261016"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
