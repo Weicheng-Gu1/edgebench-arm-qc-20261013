@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  nanobot-formal-native-arm-c1:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Exact formal source ARM C++ checker and static NBT dual-entry controls
+          no_output_timeout: 95m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 5600 python3 ci/nanobot-arm-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: nanobot-formal-native-arm-c1
+workflows:
+  nanobot-formal-native-arm-c1:
+    jobs:
+      - nanobot-formal-native-arm-c1
