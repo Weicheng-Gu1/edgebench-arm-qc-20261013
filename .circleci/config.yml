@@ -1,0 +1,24 @@
+version: 2.1
+jobs:
+  luxs3-original-v10-native-arm:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Native ARM source builds and original full-game controls
+          no_output_timeout: 120m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            sudo mkdir -p /ci
+            sudo chown "$USER:$USER" /ci
+            timeout 10800 python3 ci/bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: game-luxs3-original-v10-native-arm
+workflows:
+  luxs3-original-v10-native-arm:
+    jobs:
+      - luxs3-original-v10-native-arm
