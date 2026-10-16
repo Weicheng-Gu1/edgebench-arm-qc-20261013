@@ -1,0 +1,32 @@
+version: 2.1
+jobs:
+  tb21-native-arm-preflight:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Verify native ARM host and Docker (environment preflight only)
+          command: |
+            set -eu
+            mkdir -p /tmp/tb21-arm-preflight
+            uname -m | tee /tmp/tb21-arm-preflight/host-architecture.txt
+            test "$(uname -m)" = aarch64
+            docker info --format '{{.Architecture}}' | tee /tmp/tb21-arm-preflight/docker-architecture.txt
+            grep -Ex 'aarch64|arm64' /tmp/tb21-arm-preflight/docker-architecture.txt
+            docker pull --platform linux/arm64 ubuntu:24.04
+            docker image inspect ubuntu:24.04 --format '{{.Os}}/{{.Architecture}} {{json .RepoDigests}}' | tee /tmp/tb21-arm-preflight/image.txt
+            docker run --rm --platform linux/arm64 ubuntu:24.04 uname -m | tee /tmp/tb21-arm-preflight/container-architecture.txt
+            grep -x aarch64 /tmp/tb21-arm-preflight/container-architecture.txt
+            printf '%s\n' 'Environment preflight only. No task builds or grading have been validated.' > /tmp/tb21-arm-preflight/SCOPE.txt
+      - store_artifacts:
+          path: /tmp/tb21-arm-preflight
+          destination: tb21-arm-preflight
+workflows:
+  tb21-native-arm-preflight:
+    jobs:
+      - tb21-native-arm-preflight:
+          filters:
+            branches:
+              only: tb21-delivery-native-arm-20261016
