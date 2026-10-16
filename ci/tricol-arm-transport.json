@@ -1,0 +1,10 @@
+{
+  "schema": "tricol-formal-native-arm-encrypted-v1",
+  "source_tree_sha256": "1cd65b9d6fdf119220803e0dd70c9de41a3cf7ac9a701981d8928d9759a2c3f2",
+  "source_archive_sha256": "2580358ee4c0cf4f436b567c401f3053ae184d7af02b190843b05cf550422b8c",
+  "plaintext_sha256": "0d0e48161564d853fb3c896ee40e8dd06e15fa382f0c493e89d64821efe0ca77",
+  "cipher_sha256": "a1d90e4cd036e5bdffd31c3afdefacd44b357d9b141f53b34e23808de66e1124",
+  "cipher_hmac_sha256": "2fee35960981d70ebbf618ce51e9d7652c61bb80c101593e9b5074f1e39004fc",
+  "runner_sha256": "daae203845dce3c56b56f4e844f0cfe46962f763890e483f4613cf9cbd8cb229",
+  "key_env": "TRICOL_FORMAL_ARM_QC_20261016_C2"
+}
