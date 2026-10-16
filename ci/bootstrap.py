@@ -23,6 +23,11 @@ try:
   p=T/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(src.read_bytes());p.chmod(int(I['file_modes'][n],8))
  assert len([p for p in T.rglob('*')if p.is_file()])==86
  (O/'actual-restored-source-binding.json').write_text(json.dumps({'passed':True,'physical_files':86,'task_hashes':I['task_hashes'],'file_modes_verified':all((T/n).stat().st_mode&511==int(v,8)for n,v in I['file_modes'].items()),'transport':'SHA-bound encrypted content-addressed bundle; no task edits'}))
+ patch=Path('ci/native-control-v2.enc');assert H(patch)=='22a9000942fe46484c06b4b97f87a9c9c0ee579ac10d04bbdee71ddb7992a5da'
+ control=ROOT/'source/run-controlled-native-ARM.py';assert H(control)=='0ecd1c244f3741dabb758252ccc9bb56e83ac2cd590d7de0025cd34e8db520ba'
+ subprocess.run(['openssl','enc','-d','-aes-256-cbc','-pbkdf2','-iter','200000','-pass','env:'+M['key_env'],'-in',str(patch),'-out',str(control)],check=True,capture_output=True)
+ assert H(control)=='058c533a107d950c35ddbd7c0c1af0e17f6a3757bcedd50f4cbdbec45cc173e3'
+ (O/'actual-CI-control-only-invocation-fix.json').write_text(json.dumps({'task_files_unchanged':86,'old_driver_sha256':'0ecd1c244f3741dabb758252ccc9bb56e83ac2cd590d7de0025cd34e8db520ba','new_driver_sha256':'058c533a107d950c35ddbd7c0c1af0e17f6a3757bcedd50f4cbdbec45cc173e3','fix':'Use Bash for Bash oracle entry; original task and scorer unchanged'}))
  assert os.uname().machine=='aarch64'
  subprocess.run(['docker','pull','--platform','linux/arm64','ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55'],stdout=(O/'base-pull.stdout').open('w'),stderr=(O/'base-pull.stderr').open('w'),check=True,timeout=300)
  os.environ.update(EXPECTED_ARCH='arm64',RAILWAY_OWN_CI_ROOT='/ci',GITHUB_RUN_ID=os.environ.get('CIRCLE_BUILD_NUM','circle'))
@@ -48,6 +53,6 @@ finally:
  raw=ROOT/'details.tar.gz'
  with tarfile.open(raw,'w:gz')as z:z.add(O,arcname='artifact')
  subprocess.run(['openssl','enc','-aes-256-cbc','-pbkdf2','-iter','200000','-pass','env:'+M['key_env'],'-in',str(raw),'-out',str(artifact/'details.tar.gz.enc')],check=True,capture_output=True)
- report={'passed':status==0,'exit_code':status,'host_architecture':os.uname().machine,'task_files':86,'models_started':0,'task_version':'native-cloud-v7','encrypted_details_sha256':H(artifact/'details.tar.gz.enc'),'scope':'Actual Hash Code2019 original86 native ARM Docker controls; no model growth or final delivery acceptance implied'}
+ report={'passed':status==0,'exit_code':status,'host_architecture':os.uname().machine,'task_files':86,'models_started':0,'task_version':'native-cloud-v7','encrypted_details_sha256':H(artifact/'details.tar.gz.enc'),'scope':'Actual CityPlan2018 original86 native ARM Docker controls; no model growth or final delivery acceptance implied'}
  (artifact/'report.json').write_text(json.dumps(report,indent=2));print(json.dumps(report))
 raise SystemExit(status)
