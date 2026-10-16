@@ -1,0 +1,24 @@
+version: 2.1
+jobs:
+  cityplan-current86-native-arm:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Exact current task native ARM Docker controls
+          no_output_timeout: 50m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            sudo mkdir -p /ci
+            sudo chown "$USER:$USER" /ci
+            timeout 2900 python3 ci/bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: game-cityplan-current86-native-arm
+workflows:
+  cityplan-current86-native-arm:
+    jobs:
+      - cityplan-current86-native-arm
