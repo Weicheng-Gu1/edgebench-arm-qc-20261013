@@ -1,0 +1,10 @@
+{
+  "schema": "jagua-native-arm-encrypted-v2",
+  "source_tree_sha256": "cb7f5bee9a5e704d5466c3b5f771bbd5b141e9b405613d06da039427fcb1b85d",
+  "source_archive_sha256": "6baa576008930ae268338b1be70725e800cd9b0233003da6dfe2cf62ad09ef00",
+  "cipher_sha256": "b717fb88fcc91f8a9143b754cfef64e233d03e1b259749677b5daba88d657011",
+  "cipher_hmac_sha256": "a98228576dabac82db5d48239c6f5c75dc92a2e6813efb77f38d8fb915349b7f",
+  "plaintext_sha256": "335dd95fa767d8585eb418646577c8d43737a28f419090029cd5191e22626974",
+  "runner_sha256": "5509d30857e8d7ca44614807dec7d5cde399ed3b9009a6bcbcf32260a7350497",
+  "key_env": "JAGUA_ARM_QC_20261016_C2"
+}
