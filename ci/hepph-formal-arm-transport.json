@@ -1,0 +1,10 @@
+{
+  "schema": "hepph-formal21600-native-arm-encrypted-v1",
+  "source_tree_sha256": "af314ffe1de0dc285b001d2793013cc225f8a6196122f79543a2b971670d4aec",
+  "source_archive_sha256": "305a0b4ce11bd89036fc3c701e62c48bc7b6f7057555be9194425d5824647575",
+  "plaintext_sha256": "5d6c82f67321511959502dcf545b485a1d59530e929d01a3034d828e4496b56d",
+  "cipher_sha256": "1a25f821c922b8c4e00cbadddb87e81357ec83ca469fae2a990e9cca99e8a194",
+  "cipher_hmac_sha256": "9074ee653b337b6cf76762ea7e102cbfee8c8b332535d2e2c26e51d8bec3c5cc",
+  "payload_files_manifest_sha256": "799f698a97b52f7dc97fff1f1642f252144405a0c87d98ad777f247d8b2e24c6",
+  "runner_sha256": "784adfdb4303a34ad44a397e473852c153632fe1bc0dcc81e71f73bf5aab4fe8"
+}

@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  hepph-formal21600-native-arm-b1:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Frozen HepPh formal source native ARM static dual-entry controls
+          no_output_timeout: 65m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 3800 python3 ci/hepph-formal-arm-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: hepph-formal21600-native-arm-b1
+workflows:
+  hepph-formal21600-native-arm-b1:
+    jobs:
+      - hepph-formal21600-native-arm-b1
