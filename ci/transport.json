@@ -141,5 +141,6 @@
   ],
   "source_inputs_SHA256": "0bd7ef90d3960dacbeeeed71c6d07624cb973348c41a805eb2089a06e7f71229",
   "native_control_source_SHA256": "33eaef44d70627562a6a74ee3d0b4834f0d87882782927971527ad619ee48e3d",
-  "actual_model_calls": 0
+  "actual_model_calls": 0,
+  "failure_observer_driver_SHA256": "eb525e853897679846343bfdf41025cc90c1339a1c7888ddf76b56767dd38424"
 }

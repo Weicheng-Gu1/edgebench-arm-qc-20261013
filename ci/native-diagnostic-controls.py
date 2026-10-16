@@ -1,0 +1,47 @@
+"""Trusted native Docker controls for unchanged Lux S3 scoring components."""
+from pathlib import Path
+import argparse,json,hashlib,subprocess,os,time,platform,shutil,datetime
+p=argparse.ArgumentParser();p.add_argument('--task',default='/ci/frozen-task');p.add_argument('--output',default='/ci/artifact');p.add_argument('--arch',choices=['amd64','arm64'],default='arm64');p.add_argument('--images-json');p.add_argument('--quick-controls-only',action='store_true');a=p.parse_args();T=Path(a.task).resolve(strict=True);O=Path(a.output).resolve();O.mkdir(parents=True,exist_ok=True);assert platform.machine()==('aarch64'if a.arch=='arm64'else'x86_64');job=os.environ.get('CIRCLE_BUILD_NUM','owned-local-quick-'+str(os.getpid()));assert all(c.isalnum()or c=='-'for c in job);prefix='ytli-luxs3-v10-'+a.arch+'-'+job+'-';H=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();before={p.relative_to(T).as_posix():H(p)for p in T.rglob('*')if p.is_file()};state={'status':'actual_native_controls_running','host_architecture':platform.machine(),'requested_arch':a.arch,'models':0,'task_files':len(before),'task_hashes':before,'images':{},'controls':[],'containers':[],'builds':[],'quick_only':a.quick_controls_only};images={};owned=[];created_tags=[]
+def save():(O/'native-control-state.json').write_text(json.dumps(state,indent=2))
+def command(cmd,label,timeout=120):
+ start=time.monotonic()
+ with(O/(label+'.stdout')).open('xb')as out,(O/(label+'.stderr')).open('xb')as err:q=subprocess.run(cmd,stdin=subprocess.DEVNULL,stdout=out,stderr=err,timeout=timeout)
+ r={'label':label,'argv':cmd,'actual_exit':q.returncode,'actual_wall_seconds':time.monotonic()-start,'stdout_SHA256':H(O/(label+'.stdout')),'stderr_SHA256':H(O/(label+'.stderr'))};(O/(label+'.command.json')).write_text(json.dumps(r,indent=2));assert q.returncode==0,(label,q.returncode);return r
+save()
+try:
+ if a.images_json:
+  old=json.loads(Path(a.images_json).read_text())['images'];images={role:value['id']for role,value in old.items()}
+ else:
+  for role,ctx in [('environment','environment'),('verifier','tests')]:
+   tag=prefix+role+':native';created_tags.append(tag);state['builds'].append(command(['docker','build','--no-cache','--network=none','--platform','linux/'+a.arch,'--label','edgebench.owner=ytli','--label','edgebench.native_arm_run='+job,'-t',tag,'-f',str(T/ctx/'Dockerfile'),str(T/ctx)],'build-'+role,1800));images[role]=json.loads(subprocess.check_output(['docker','image','inspect',tag]))[0]['Id'];save()
+ assert set(images)=={'environment','verifier'}
+ for role,i in images.items():
+  d=json.loads(subprocess.check_output(['docker','image','inspect',i]))[0];assert d['Architecture']==a.arch and d['Config']['Labels']['edgebench.owner']=='ytli';state['images'][role]={'Id':d['Id'],'architecture':d['Architecture']}
+ base=['docker','run','--network=none','--read-only','--cap-drop=ALL','--cap-add=SETUID','--cap-add=SETGID','--cap-add=KILL','--cap-add=CHOWN','--security-opt=no-new-privileges','--cpus=4','--memory=8g','--memory-swap=8g','--pids-limit=256','--tmpfs','/tmp:rw,nosuid,nodev,size=1g','--label','edgebench.owner=ytli','--label','edgebench.native_arm_run='+job]
+ name=prefix+'ordinary-user';owned.append(name);probe="from pathlib import Path;import os,json,platform,torch,jax,numpy;assert os.getuid()==1500;assert not Path('/private').exists();assert not Path('/solution').exists();print(json.dumps({'uid':os.getuid(),'arch':platform.machine(),'public_workdir':Path('/home/workspace/luxs3-adaptive-strategy').is_dir(),'torch':torch.__version__,'jax':jax.__version__,'numpy':numpy.__version__,'runtime':json.loads(Path('/opt/lux-runtime/native-runtime.json').read_text())}))";command(base+['--name',name,'--user','1500:1500',images['environment'],'/opt/lux-venv/bin/python','-I','-B','-c',probe],'ordinary-user-probe',120);state['ordinary_user_probe']=json.loads((O/'ordinary-user-probe.stdout').read_text());assert state['ordinary_user_probe']['public_workdir'];save()
+ for label in ['NOP','syntax-invalid','trusted-private-missing']+([]if a.quick_controls_only else['open-reference']):
+  X=O/label;X.mkdir();S=X/'submission';S.mkdir();E=X/'verifier';E.mkdir();E.chmod(0o700)
+  if label=='syntax-invalid':(S/'main.py').write_text('this is invalid Python @\n')
+  if label=='open-reference':shutil.copy2(T/'solution/main.py',S/'main.py')
+  sm={p.relative_to(S).as_posix():H(p)for p in S.rglob('*')if p.is_file()};name=prefix+label.lower();owned.append(name);cmd=base+['--name',name,'--user','0:0','-v',str(S)+':/home/workspace/luxs3-adaptive-strategy/submission:ro','-v',str(E)+':/logs/verifier:rw']
+  if label=='trusted-private-missing':Z=X/'empty-private';Z.mkdir();Z.chmod(0o700);cmd+=['-v',str(Z)+':/private:ro']
+  cmd += [images['verifier'],'/bin/bash','-c','set -euo pipefail\nunset PYTHONPATH PYTHONHOME PYTHONSTARTUP PYTHONUSERBASE LD_PRELOAD LD_LIBRARY_PATH LD_AUDIT BASH_ENV ENV\nexport PATH=/opt/lux-venv/bin:/usr/bin:/bin\nexport LD_LIBRARY_PATH=/opt/lux-python/lib\nexport PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 JAX_PLATFORMS=cpu\nexec /opt/lux-venv/bin/python -I -B -c \'import sys,runpy,json\nsys.path.insert(0,\'"\'"\'/tests\'"\'"\')\nimport lux_secure_original_episode_transport_research_v1 as transport\noriginal_fail=transport.SecureBot.fail\ndef observe_fail(self,reason):\n print(json.dumps({\'"\'"\'trusted_observer_only\'"\'"\':True,\'"\'"\'candidate\'"\'"\':self.candidate,\'"\'"\'reason\'"\'"\':reason,\'"\'"\'remainingOverageTime\'"\'"\':self.remainingOverageTime,\'"\'"\'process_returncode\'"\'"\':None if self.process is None else self.process.returncode,\'"\'"\'bounded_actual_policy_stderr\'"\'"\':self.stderr_data.decode(errors=\'"\'"\'replace\'"\'"\')}),file=sys.stderr,flush=True)\n return original_fail(self,reason)\ntransport.SecureBot.fail=observe_fail\nrunpy.run_path(\'"\'"\'/tests/grader.py\'"\'"\',run_name=\'"\'"\'__main__\'"\'"\')\n\''] if label=='open-reference' else [images['verifier'],'/bin/bash','/tests/test.sh'];start=time.monotonic()
+  with(X/'actual-native.stdout').open('xb')as out,(X/'actual-native.stderr').open('xb')as err:q=subprocess.run(cmd,stdin=subprocess.DEVNULL,stdout=out,stderr=err,timeout=2400 if label=='open-reference'else 180)
+  r=json.loads((E/'score.json').read_text());row={'label':label,'actual_exit':q.returncode,'actual_wall_seconds':time.monotonic()-start,'score_report_SHA256':H(E/'score.json'),'submission_SHA256':sm,'actual_whole_report':r,'argv':cmd}
+  if label=='trusted-private-missing':assert q.returncode!=0 and r['valid']is False and r['score']is None and not(E/'reward.txt').exists()and not(E/'reward.json').exists();row['infrastructure_null_has_no_numeric_reward']=True
+  else:
+   assert q.returncode==0 and r['valid']is True and float((E/'reward.txt').read_text())==r['score'];row['native_reward_exactly_equals_structured_score']=True
+   if label in ['NOP','syntax-invalid']:assert r['score']==0 and r['pass_rate']==0
+   else:
+    assert r['pass_rate']==1 and r['metrics']['native_matches']==40 and r['metrics']['original_games']==8;games=json.loads((E/'private-native-games.json').read_text());assert len(games)==8;row['whole_original_eight_games_complete']=True;row['private_original_game_reports_SHA256']=H(E/'private-native-games.json');row['reference_score_difference_from_original_AMD_half']=r['score']-.5
+  assert sm=={p.relative_to(S).as_posix():H(p)for p in S.rglob('*')if p.is_file()};state['controls'].append(row);save()
+ assert before=={p.relative_to(T).as_posix():H(p)for p in T.rglob('*')if p.is_file()};state.update(status='actual_native_quick_controls_passed_not_full_reference'if a.quick_controls_only else'actual_native_full_original_reference_and_failure_controls_passed',source_unchanged=True,actual_model_calls=0)
+except BaseException as e:state.update(status='actual_native_control_failure_no_ARM_or_delivery_pass',error_type=type(e).__name__,error=str(e));raise
+finally:
+ for name in owned:
+  q=subprocess.run(['docker','inspect',name],capture_output=True)
+  if q.returncode==0:
+   d=json.loads(q.stdout)[0];assert d['Config']['Labels']['edgebench.owner']=='ytli'and d['Config']['Labels']['edgebench.native_arm_run']==job;running=d['State']['Running'];subprocess.run(['docker','rm','-f',name],check=True,capture_output=True);absent=subprocess.run(['docker','inspect',name],capture_output=True).returncode!=0;state['containers'].append({'name':name,'was_running_before_cleanup':running,'actual_absent':absent})
+ for tag in created_tags:subprocess.run(['docker','image','rm',tag],capture_output=True,timeout=90)
+ state['finished_UTC']=datetime.datetime.now(datetime.timezone.utc).isoformat();save()
+
