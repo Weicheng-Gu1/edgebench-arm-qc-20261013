@@ -1,0 +1,10 @@
+{
+  "schema": "nanobot-formal-native-arm-encrypted-v1",
+  "source_tree_sha256": "b5ef4b83e004d7fc12ae0dcd0ec544b8655b7f6c07da3427eee736ac102842df",
+  "source_archive_sha256": "a97483213bc9b7b2b2d5829cfe95c75843b33ffbdf5a958402984d361baa1839",
+  "plaintext_sha256": "03e70aafc263647da3821812b8e5912a1c2176e346b8ca4c8e1d52436ff27989",
+  "cipher_sha256": "2cec2f3ada3ef6b40393f2a404ea0011afc80bbef00db69657d29850c1d03fd6",
+  "cipher_hmac_sha256": "8ca0757d8aa787a00a2dbc94eb6ecace3d3a0358c1fc4774c9fedc7771695df1",
+  "runner_sha256": "d72751f37ef96d9d9865dc42c9874e2347f32decf24826d06e23452386970853",
+  "key_env": "NANOBOT_FORMAL_ARM_QC_20261016_C2"
+}
