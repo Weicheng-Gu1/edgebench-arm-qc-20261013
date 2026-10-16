@@ -1,0 +1,56 @@
+{
+  "public_files": {
+    "crypto_transport.py": {
+      "SHA256": "6a1b91854e02d2f4d7109fe725050bb461065fa1a3b1a820e440a492a5b35ba9",
+      "bytes": 2040,
+      "mode": 420
+    },
+    "public-pip-bootstrap-lock.json": {
+      "SHA256": "240cdca426765130e4ebf0d547fb70f9175fd48a7d6467c35fa3ac985042076b",
+      "bytes": 878,
+      "mode": 420
+    },
+    "bootstrap_public_pip_venv.py": {
+      "SHA256": "e6ad68560babdedd035799fdfa8e04c10190196b809138fbeca1bdd74269c886",
+      "bytes": 4027,
+      "mode": 420
+    },
+    "crypto-wheel-lock-amd64.json": {
+      "SHA256": "e45ad71863ddf6216e7d2399641b18d33e93cade12eaba5538747f9dae80740d",
+      "bytes": 1377,
+      "mode": 420
+    },
+    "crypto_action.py": {
+      "SHA256": "b4c2a73fdc4982cd3454e9ea1e3ccdc089a1c328ee35e64bf46c1224870fb722",
+      "bytes": 756,
+      "mode": 420
+    },
+    "crypto-wheel-lock-arm64.json": {
+      "SHA256": "cd26ce66b8bcd43b5b5432c822c96005b8f48e223d3cdccb9c8fdca458d8c438",
+      "bytes": 1376,
+      "mode": 420
+    },
+    "circle_worker.py": {
+      "SHA256": "c149c0497fe3e16219deaa6d845ba3a099092b2410aac63070ca490b0d52a972",
+      "bytes": 11724,
+      "mode": 420
+    },
+    "preflight_circle_machine.py": {
+      "SHA256": "ab9251be3d6efa2046e5bb35f809d29b6776f45e13076f5b27e9b1e9581f4ad4",
+      "bytes": 2896,
+      "mode": 420
+    }
+  },
+  "ciphertext": {
+    "SHA256": "496b4bfe262f07439f66ca5438bc52afae4d7145b17ee95b62dcb4ccd1c101e9",
+    "bytes": 2670158
+  },
+  "source_AAD": "edgebench-ahc043-full-native-arm-r1-circle/source",
+  "result_AAD_prefix": "edgebench-ahc043-full-native-arm-r1-circle/result",
+  "source_payload_manifest_SHA256": "d15b7281e0b10caddec9edab5c7e132bf93a78e4346c8f25983d4cca20d2723f",
+  "reviewed_source_archive_SHA256": "6a316deba0e9b833c6397fb56564eed91bea1d3c3bb2709ceb65df4c2dba5963",
+  "model_calls": 0,
+  "lanes": [
+    "native-arm64"
+  ]
+}

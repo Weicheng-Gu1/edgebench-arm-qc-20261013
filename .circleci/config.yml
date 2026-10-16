@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  ahc043-native-arm-r1:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: AHC043 native ARM12 source-bound original full receiver controls
+          no_output_timeout: 185m
+          command: sudo --preserve-env=EDGEBENCH_AHC043_FULL_NATIVE_ARM_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/ahc043-full-native-arm-r1/circle_worker.py --lane native-arm64 --work /tmp/ahc043-full-arm64-work --output /tmp/ahc043-full-arm64-public
+      - store_artifacts:
+          path: /tmp/ahc043-full-arm64-public
+          destination: ahc043-full-native-arm-r1/native-arm64
+workflows:
+  ahc043-full-native-arm-r1:
+    jobs:
+      - ahc043-native-arm-r1:
+          filters:
+            branches:
+              only: edgebench-ahc043-full-native-arm-r1-20261016
