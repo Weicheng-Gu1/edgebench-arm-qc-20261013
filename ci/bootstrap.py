@@ -23,11 +23,11 @@ try:
   p=T/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(src.read_bytes());p.chmod(int(I['file_modes'][n],8))
  assert len([p for p in T.rglob('*')if p.is_file()])==86
  (O/'actual-restored-source-binding.json').write_text(json.dumps({'passed':True,'physical_files':86,'task_hashes':I['task_hashes'],'file_modes_verified':all((T/n).stat().st_mode&511==int(v,8)for n,v in I['file_modes'].items()),'transport':'SHA-bound encrypted content-addressed bundle; no task edits'}))
- patch=Path('ci/native-control-v2.enc');assert H(patch)=='ab7ac8390dfb7e59c6275c0e537662577647d5dc4b45beeacb0d6324ecfd7998'
+ patch=Path('ci/native-control-v2.enc');assert H(patch)=='5a36bd61a504e0c6f96bb58c36b5da60568824cd0a2f8ac817c5265cb5333244'
  control=ROOT/'source/run-controlled-native-ARM.py';assert H(control)=='0ecd1c244f3741dabb758252ccc9bb56e83ac2cd590d7de0025cd34e8db520ba'
  subprocess.run(['openssl','enc','-d','-aes-256-cbc','-pbkdf2','-iter','200000','-pass','env:'+M['key_env'],'-in',str(patch),'-out',str(control)],check=True,capture_output=True)
- assert H(control)=='1e3cd21c49d3477d4ad6a86f26f979e4fed4683737f20d7a429b73506e9ae38a'
- (O/'actual-CI-control-only-invocation-fix.json').write_text(json.dumps({'task_files_unchanged':86,'old_driver_sha256':'0ecd1c244f3741dabb758252ccc9bb56e83ac2cd590d7de0025cd34e8db520ba','new_driver_sha256':'1e3cd21c49d3477d4ad6a86f26f979e4fed4683737f20d7a429b73506e9ae38a','fix':'Use declared Bash for both entry points; trusted launcher clears shell startup hooks before interpreter; frozen task/scorer unchanged'}))
+ assert H(control)=='1b6bc4c0b55e7c1dfb81b1a4c5aa1e8248ab5b80949c95ebe78b42386935ab9e'
+ (O/'actual-CI-control-only-invocation-fix.json').write_text(json.dumps({'task_files_unchanged':86,'old_driver_sha256':'0ecd1c244f3741dabb758252ccc9bb56e83ac2cd590d7de0025cd34e8db520ba','new_driver_sha256':'1b6bc4c0b55e7c1dfb81b1a4c5aa1e8248ab5b80949c95ebe78b42386935ab9e','fix':'Use declared Bash entry points and parse final evaluator JSON line after normal starter text; original task and score unchanged'}))
  assert os.uname().machine=='aarch64'
  subprocess.run(['docker','pull','--platform','linux/arm64','ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55'],stdout=(O/'base-pull.stdout').open('w'),stderr=(O/'base-pull.stderr').open('w'),check=True,timeout=300)
  os.environ.update(EXPECTED_ARCH='arm64',RAILWAY_OWN_CI_ROOT='/ci',GITHUB_RUN_ID=os.environ.get('CIRCLE_BUILD_NUM','circle'))
