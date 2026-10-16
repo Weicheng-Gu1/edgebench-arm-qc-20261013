@@ -14,7 +14,7 @@ jobs:
             test "$(uname -m)" = aarch64
             sudo mkdir -p /ci
             sudo chown "$USER:$USER" /ci
-            timeout 10800 python3 ci/bootstrap.py
+            sudo --preserve-env=LUXS3_V10_NATIVE_ARM_QC_20261017_V1,CIRCLE_BUILD_NUM /usr/bin/timeout 10800 /usr/bin/python3 ci/bootstrap.py
       - store_artifacts:
           path: circle-artifact
           destination: game-luxs3-original-v10-native-arm
