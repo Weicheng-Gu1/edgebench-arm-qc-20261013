@@ -1,32 +1,123 @@
-version: 2.1
-jobs:
-  tb21-native-arm-preflight:
-    machine:
-      image: ubuntu-2204:current
-    resource_class: arm.large
-    steps:
-      - checkout
-      - run:
-          name: Verify native ARM host and Docker (environment preflight only)
-          command: |
-            set -eu
-            mkdir -p /tmp/tb21-arm-preflight
-            uname -m | tee /tmp/tb21-arm-preflight/host-architecture.txt
-            test "$(uname -m)" = aarch64
-            docker info --format '{{.Architecture}}' | tee /tmp/tb21-arm-preflight/docker-architecture.txt
-            grep -Ex 'aarch64|arm64' /tmp/tb21-arm-preflight/docker-architecture.txt
-            docker pull --platform linux/arm64 ubuntu:24.04
-            docker image inspect ubuntu:24.04 --format '{{.Os}}/{{.Architecture}} {{json .RepoDigests}}' | tee /tmp/tb21-arm-preflight/image.txt
-            docker run --rm --platform linux/arm64 ubuntu:24.04 uname -m | tee /tmp/tb21-arm-preflight/container-architecture.txt
-            grep -x aarch64 /tmp/tb21-arm-preflight/container-architecture.txt
-            printf '%s\n' 'Environment preflight only. No task builds or grading have been validated.' > /tmp/tb21-arm-preflight/SCOPE.txt
-      - store_artifacts:
-          path: /tmp/tb21-arm-preflight
-          destination: tb21-arm-preflight
-workflows:
-  tb21-native-arm-preflight:
-    jobs:
-      - tb21-native-arm-preflight:
-          filters:
-            branches:
-              only: tb21-delivery-native-arm-20261016
+{
+  "version": 2.1,
+  "jobs": {
+    "validate-amd64": {
+      "parameters": {
+        "task": {
+          "type": "string"
+        }
+      },
+      "machine": {
+        "image": "ubuntu-2204:current"
+      },
+      "resource_class": "large",
+      "steps": [
+        "checkout",
+        {
+          "run": {
+            "name": "Install public encryption library",
+            "command": "python3 -m pip install --quiet cryptography==44.0.3"
+          }
+        },
+        {
+          "run": {
+            "name": "Clean public build and complete saved-submission validation",
+            "no_output_timeout": "90m",
+            "command": "python3 .circleci/tb8_validate.py \"<< parameters.task >>\" amd64"
+          }
+        },
+        {
+          "store_artifacts": {
+            "path": "/tmp/tb8-ci-public",
+            "destination": "tb8-amd64"
+          }
+        }
+      ]
+    },
+    "validate-arm64": {
+      "parameters": {
+        "task": {
+          "type": "string"
+        }
+      },
+      "machine": {
+        "image": "ubuntu-2204:current"
+      },
+      "resource_class": "arm.large",
+      "steps": [
+        "checkout",
+        {
+          "run": {
+            "name": "Install public encryption library",
+            "command": "python3 -m pip install --quiet cryptography==44.0.3"
+          }
+        },
+        {
+          "run": {
+            "name": "Clean public build and complete saved-submission validation",
+            "no_output_timeout": "90m",
+            "command": "python3 .circleci/tb8_validate.py \"<< parameters.task >>\" arm64"
+          }
+        },
+        {
+          "store_artifacts": {
+            "path": "/tmp/tb8-ci-public",
+            "destination": "tb8-arm64"
+          }
+        }
+      ]
+    }
+  },
+  "workflows": {
+    "tb8-public-validation": {
+      "jobs": [
+        {
+          "validate-amd64": {
+            "matrix": {
+              "parameters": {
+                "task": [
+                  "hpy-vectorcall-extension-migration",
+                  "mosquitto-delayed-will-restart",
+                  "micropython-native-exception-scopes",
+                  "c04-channel-pruning-lineage",
+                  "sqlmesh-retained-history-restatement",
+                  "osqp-atomic-updates",
+                  "assimp-morph-asset-roundtrip",
+                  "postgres-rewind-relocation"
+                ]
+              }
+            },
+            "filters": {
+              "branches": {
+                "only": "tb21-delivery-native-arm-20261016"
+              }
+            }
+          }
+        },
+        {
+          "validate-arm64": {
+            "matrix": {
+              "parameters": {
+                "task": [
+                  "hpy-vectorcall-extension-migration",
+                  "mosquitto-delayed-will-restart",
+                  "micropython-native-exception-scopes",
+                  "c04-channel-pruning-lineage",
+                  "sqlmesh-retained-history-restatement",
+                  "osqp-atomic-updates",
+                  "assimp-morph-asset-roundtrip",
+                  "postgres-rewind-relocation"
+                ]
+              }
+            },
+            "filters": {
+              "branches": {
+                "only": "tb21-delivery-native-arm-20261016"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
