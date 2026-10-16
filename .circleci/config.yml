@@ -1,24 +1,24 @@
 version: 2.1
 jobs:
-  cityplan-current86-native-arm:
+  ahc051-fixed143-native-arm:
     machine:
       image: ubuntu-2404:current
     resource_class: arm.large
     steps:
       - checkout
       - run:
-          name: Exact current task native ARM Docker controls
-          no_output_timeout: 50m
+          name: Exact143 native ARM Docker/static-layout controls
+          no_output_timeout: 40m
           command: |
             set +x
             test "$(uname -m)" = aarch64
             sudo mkdir -p /ci
             sudo chown "$USER:$USER" /ci
-            timeout 2900 python3 ci/bootstrap.py
+            timeout 2400 python3 ci/ahc051-bootstrap.py
       - store_artifacts:
           path: circle-artifact
-          destination: game-cityplan-current86-native-arm
+          destination: game-ahc051-fixed143-native-arm
 workflows:
-  cityplan-current86-native-arm:
+  ahc051-fixed143-native-arm:
     jobs:
-      - cityplan-current86-native-arm
+      - ahc051-fixed143-native-arm

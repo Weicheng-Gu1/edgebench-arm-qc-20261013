@@ -1,0 +1,88 @@
+{
+  "base": {
+    "encrypted_sha256": "6b12a4cf9e1cef2023b4c43ba87af7a2edf18b1f4f3787cdc2fb6b07a1be5409",
+    "plaintext_sha256": "36ba24cc2010b8843aa5cba3fe5d6e31855e51dede234d033301c5f9b7b06f22",
+    "key_env": "CITYPLAN86_NATIVE_QC_20261016_V4",
+    "chunks": [
+      {
+        "name": "payload-000.enc",
+        "bytes": 12582912,
+        "sha256": "c8cb6ce316c9f66504f874fde36deeaf916ca5a79ed6a4633cee95f2c1c871b3"
+      },
+      {
+        "name": "payload-001.enc",
+        "bytes": 12582912,
+        "sha256": "a06baf1266acfde8e50efbdd0f91e294678374560311bbbd68038f39ec59b233"
+      },
+      {
+        "name": "payload-002.enc",
+        "bytes": 12582912,
+        "sha256": "a457a2da0297f17801d770a7d46220ae36fabb8659d2f00a16cdb8ea5b9ad3b2"
+      },
+      {
+        "name": "payload-003.enc",
+        "bytes": 12582912,
+        "sha256": "a71b51cb1a9ff76433bbdb92751d14b4498670ba18d427881f25d814f051c1bf"
+      },
+      {
+        "name": "payload-004.enc",
+        "bytes": 12582912,
+        "sha256": "6b944afd7d9a971c0dd047e478f0c8ba8e6037b4782a3734b6c76b99c290bb67"
+      },
+      {
+        "name": "payload-005.enc",
+        "bytes": 12582912,
+        "sha256": "5f84b81c43b2b79cb71cdff4a366fca441df51c3e0c40ff806e0f80ab0a4c93b"
+      },
+      {
+        "name": "payload-006.enc",
+        "bytes": 12582912,
+        "sha256": "52ddef4b9ee3b511e566a1d79904fe048e48e97ef8c974dc8537ceaa2cb89af3"
+      },
+      {
+        "name": "payload-007.enc",
+        "bytes": 12582912,
+        "sha256": "ebb88803abe7cd6bcb306e6f72504a3f30fc9cb1f904804b5f869b5aca5a941e"
+      },
+      {
+        "name": "payload-008.enc",
+        "bytes": 12582912,
+        "sha256": "1b550c4555227da63dfa30baee889d1aff371cc2576ea2d1c2eb49e30203af8b"
+      },
+      {
+        "name": "payload-009.enc",
+        "bytes": 12582912,
+        "sha256": "8ef065210e2bafe7f77458cfa1174983a4ec319e4f61ae78b7bc64e10682821d"
+      },
+      {
+        "name": "payload-010.enc",
+        "bytes": 12582912,
+        "sha256": "733e81480b63e9c2f475acb0ea6d623e4bc9a08aef967dae9209b186333e7690"
+      },
+      {
+        "name": "payload-011.enc",
+        "bytes": 12582912,
+        "sha256": "057ecdbfc5cce23238e3f472f7779844b397383c7d7bc86648abaa51597dec44"
+      },
+      {
+        "name": "payload-012.enc",
+        "bytes": 12582912,
+        "sha256": "e36cddb55dd3679aebfe77e1dc3b013e85e0a2b19280490fac7c4f228fe4fe9b"
+      },
+      {
+        "name": "payload-013.enc",
+        "bytes": 12582912,
+        "sha256": "53609f0b372cee2d65ca0781c62e8b470780e0f978fff3b73414a87de24db18e"
+      },
+      {
+        "name": "payload-014.enc",
+        "bytes": 7086608,
+        "sha256": "4c15bd1be4e982074797c5468a70b06a3903bfbf27de5154d825b5636bb72426"
+      }
+    ]
+  },
+  "key_env": "AHC051_NATIVE143_QC_20261016_V1",
+  "new_cipher_SHA256": "7c3731cc7f99ba61226ff23f46282f1a3f73a74b9da97a3551007c7013cf46b2",
+  "new_plain_SHA256": "25cdd36fe43d85a8dc0de48e4210e1dfb99d1c7b1ffb13abaf977967b2a9788d",
+  "task_files": 143
+}
