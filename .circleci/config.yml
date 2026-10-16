@@ -1,0 +1,39 @@
+version: 2.1
+jobs:
+  ahc043-multi-agent:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: AHC043 agent one dual-platform public build on AMD host
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_AHC043_SINGLEMULTI_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/ahc043-singlemulti-r1/circle_worker.py --lane multi-agent --work /tmp/ahc043-singlemulti-r1-multi-agent-work --output /tmp/ahc043-singlemulti-r1-multi-agent-public
+      - store_artifacts:
+          path: /tmp/ahc043-singlemulti-r1-multi-agent-public
+          destination: ahc043-singlemulti-r1/multi-agent
+  ahc043-multi-verifier:
+    machine:
+      image: ubuntu-2404:2026.05.1
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: AHC043 verifier one dual-platform public build on AMD host
+          no_output_timeout: 245m
+          command: sudo --preserve-env=EDGEBENCH_AHC043_SINGLEMULTI_R1_KEY,CIRCLE_SHA1,CIRCLE_BUILD_NUM -n python3 .circleci/ahc043-singlemulti-r1/circle_worker.py --lane multi-verifier --work /tmp/ahc043-singlemulti-r1-multi-verifier-work --output /tmp/ahc043-singlemulti-r1-multi-verifier-public
+      - store_artifacts:
+          path: /tmp/ahc043-singlemulti-r1-multi-verifier-public
+          destination: ahc043-singlemulti-r1/multi-verifier
+workflows:
+  ahc043-singlemulti-r1:
+    jobs:
+      - ahc043-multi-agent:
+          filters:
+            branches:
+              only: edgebench-ahc043-singlemulti-r1-20261016
+      - ahc043-multi-verifier:
+          filters:
+            branches:
+              only: edgebench-ahc043-singlemulti-r1-20261016
