@@ -1,0 +1,10 @@
+{
+  "schema": "ahc054-formal-native-arm-encrypted-v1",
+  "source_tree_sha256": "f209d3dfd6c8ceca1c834a41a06904c873867e4ca6ad1fdc1b75ccb21e73fecb",
+  "source_archive_sha256": "4b04bebbb60ebf51682d3361fc47ecfd01d6623b918f7869d6e81b5b4450dca4",
+  "plaintext_sha256": "96d095e6e5c2aa2e034fe52fe30a30e8e9a0742655fcc3d42019ded0e8650c9b",
+  "cipher_sha256": "d59011eb613196487bbcfe697a8f3f4c9fd862e88b65e7e8014db28d4418b977",
+  "cipher_hmac_sha256": "2dab3744b8f92a385fa827f10c8b3ce1c53b656699e9a0d2c0f33ce87fb5de0e",
+  "runner_sha256": "f4858addc8ee3e0877eb3aad510ea2ea176e71b9d47888480d190f161096b033",
+  "key_env": "AHC054_FORMAL_ARM_QC_20261016_C1"
+}

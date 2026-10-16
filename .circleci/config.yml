@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  ahc054-formal-native-arm-c1:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Exact formal source ARM dual-entry and C++ isolation controls
+          no_output_timeout: 95m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 5600 python3 ci/ahc054-arm-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: ahc054-formal-native-arm-c1
+workflows:
+  ahc054-formal-native-arm-c1:
+    jobs:
+      - ahc054-formal-native-arm-c1
