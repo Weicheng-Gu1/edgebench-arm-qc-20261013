@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  luxs3-original-v10-native-arm:
+  luxs3-original-v11-native-arm:
     machine:
       image: ubuntu-2404:current
     resource_class: arm.large
@@ -17,8 +17,8 @@ jobs:
             sudo --preserve-env=LUXS3_V10_NATIVE_ARM_QC_20261017_V1,CIRCLE_BUILD_NUM /usr/bin/timeout 10800 /usr/bin/python3 ci/bootstrap.py
       - store_artifacts:
           path: circle-artifact
-          destination: game-luxs3-original-v10-native-arm
+          destination: game-luxs3-original-v11-native-arm
 workflows:
-  luxs3-original-v10-native-arm:
+  luxs3-original-v11-native-arm:
     jobs:
-      - luxs3-original-v10-native-arm
+      - luxs3-original-v11-native-arm

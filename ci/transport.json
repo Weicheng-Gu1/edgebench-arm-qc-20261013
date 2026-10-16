@@ -142,5 +142,9 @@
   "source_inputs_SHA256": "0bd7ef90d3960dacbeeeed71c6d07624cb973348c41a805eb2089a06e7f71229",
   "native_control_source_SHA256": "33eaef44d70627562a6a74ee3d0b4834f0d87882782927971527ad619ee48e3d",
   "actual_model_calls": 0,
-  "failure_observer_driver_SHA256": "ff7716d1a20a08da03012005eb69a955bb3c2147798554ff47e5fd64653da4b3"
+  "v11_delta_cipher_SHA256": "8d8a27c5dc7a4e5c87ded883a8df756c7b25ff57a820bc1fae18a5e027f9a016",
+  "v11_delta_plain_SHA256": "5e795ade19c0c7c86f77dd4b7bd7011164d10e603561c5d9544ba728b09cb663",
+  "v11_inputs_SHA256": "bdfbfdca9f14d0e307614c7a93a2611a9614eb03ee1b85c27a11f08ff84d0064",
+  "v11_target_files": 861,
+  "v11_source_task_revision": "original-native-wins-v11-arm-trusted-reference-cpu"
 }
