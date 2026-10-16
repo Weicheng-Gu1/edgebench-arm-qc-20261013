@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  native-cpp20-v001-task-qc:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Source-built frozen C++20 task on native ARM64
+          no_output_timeout: 45m
+          command: timeout --signal=KILL 100m python3 .circleci/swe_cpp20_v001_native_arm_qc.py
+      - store_artifacts:
+          path: /tmp/swe-cpp20-v001-native-arm-public-r1
+          destination: swe-CAD-native-arm-qc
+workflows:
+  swe-CAD-native-arm-qc-r1:
+    jobs:
+      - native-cpp20-v001-task-qc:
+          filters:
+            branches:
+              only: swe-cpp20-v001-native-arm-qc-20261016-r4
