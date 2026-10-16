@@ -1,0 +1,23 @@
+version: 2.1
+jobs:
+  brainwall-frozen-source-native-arm-root-v1:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Frozen source native ARM rebuild, paired controls and five reference repeats
+          no_output_timeout: 60m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 3500 python3 ci/brainwall-arm-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: brainwall-frozen-source-native-arm-root-v1
+workflows:
+  brainwall-frozen-source-native-arm-root-v1:
+    jobs:
+      - brainwall-frozen-source-native-arm-root-v1
+

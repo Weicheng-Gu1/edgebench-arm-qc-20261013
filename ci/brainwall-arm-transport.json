@@ -1,0 +1,9 @@
+{
+  "schema": "brainwall-native-arm-encrypted-v2",
+  "source_tree_sha256": "a997aaa16e0ca21e9c8ad75bc65ea7bb63d1357eb8728f3f2b18c7d63642793f",
+  "key_env": "BRAINWALL_ARM_QC_20261016_ROOT_V1",
+  "plaintext_sha256": "599e770221946e0a96cd9f6aea3f3fcb9c86092732d0ce2e82a03800311291cf",
+  "cipher_sha256": "9aaa336849ce76dae67c4b0c54a14022e4bbb77c3bc2b69a387fce93202cd7d8",
+  "cipher_hmac_sha256": "370fbc633d9c2447af9be21fa5bef51d3d3ad5032f70438ee831b4ea2af8ec2e",
+  "runner_sha256": "359184fdc2546d96a768ece285b8b8d5b4b13dfd3787b61abd745ed40bbfb4e5"
+}
