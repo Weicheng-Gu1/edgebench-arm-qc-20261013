@@ -1,0 +1,12 @@
+{
+  "schema": "jsp-native-arm-encrypted-v1",
+  "source_tree_sha256": "2b7677457099042827579cda86551882c0ce3b3e30925c4a170a5cf385d4d5ea",
+  "stage_bundle_sha256": "dee1e1512aa81378b692ab9deb88d39af7fcfcb6ef8e21a9985750e951bfb063",
+  "stage_manifest_sha256": "bd3ce1f923796dba788c616cf73e2db9eaaa6c59687ac481b6d90d92736b68f3",
+  "source_bootstrap_sha256": "3fb39accbdbc23801d6866ae954b9c6c56173164443472d69bcf72006a09808f",
+  "runner_sha256": "ea125e21e44eac31beadfa27d3430053d3eaa46131d8931c15dde2703586d704",
+  "plaintext_sha256": "a89b9d01ea8060a38016d864f69a7dcea2fb7efd0a03298dc720b5d5be82cbc4",
+  "cipher_sha256": "9ac07d7df4f933adeb4d5b2d211da991a6c1752b87bda08d6fa0be2ccef6949b",
+  "cipher_hmac_sha256": "f7cd3c0c225010efb220ad936792e149fc61b57865061d1c2e162568915b3244",
+  "payload_files_manifest_sha256": "0c5e50448f530f820bd9f60b476ca21cd9320b1e5d063bafbed6ff6140a1ad96"
+}
