@@ -1,0 +1,12 @@
+{
+  "schema": "drone-native-arm-encrypted-v1",
+  "source_tree_sha256": "12cf02800a4f4d3ccee8d3ff38110f6b1b2107fe5896aa0bb58287d4882d051f",
+  "stage_bundle_sha256": "6fe51faffb5748940a7551efd6b5c9a300949876af5024bb491f9568de22930d",
+  "stage_manifest_sha256": "3ce1a544f942ceac611d96bb2862628bc1f0b9d1f36b5c936cd50388effcf017",
+  "source_bootstrap_sha256": "f7a70f42891a790c4398a3b9b80ec626d6ed225ec6b2533ced6d4d77d09b7b03",
+  "runner_sha256": "939b3790869b196a693e9c154c114edf5d920ef4bf329ce17b64e83a845b43cf",
+  "plaintext_sha256": "aca25dcae280776d748bac1ae636cd4b0c5ee59ecbe2c334c6db308daf35e6b1",
+  "cipher_sha256": "55e1d50ab1a8c46c720c9bd08bd0a95b27fe32dbc885a34a719769d2510767f8",
+  "cipher_hmac_sha256": "6ff957496fe83cb6dc9c899489ace5381f04ef3f834b9fe67ec65dd3f5fc5995",
+  "payload_files_manifest_sha256": "6b9a2091cfe8af5f15ab6c55a4eaf3580e5c813627329e2f59c12984bb2aef9e"
+}
