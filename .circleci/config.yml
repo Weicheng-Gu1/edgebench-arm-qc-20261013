@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  pace2017-native-arm-c1:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Frozen PACE2017 source native ARM original-validator dual-entry controls
+          no_output_timeout: 65m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 3800 python3 ci/pace2017-arm-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: pace2017-native-arm-c1
+workflows:
+  pace2017-native-arm-c1:
+    jobs:
+      - pace2017-native-arm-c1

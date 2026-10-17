@@ -1,0 +1,10 @@
+{
+  "schema": "pace2017-native-arm-encrypted-v1",
+  "source_tree_sha256": "2a3218a26906ac6b9145c87618b63ac0a74501318e3773ab0c9a218d76d09255",
+  "source_archive_sha256": "badaef8070f6c2216ef4170940ddfe3e4a7a71adaebcaa5994aad2d48cf385e1",
+  "plaintext_sha256": "98886887326bf847c2ae7d1a9824f96621c4bf1aea3c619231324d7c968188c6",
+  "cipher_sha256": "29ffcd243999f92ba73c2f1ee037df684ff5195eed9748bba1c20d92472449d7",
+  "cipher_hmac_sha256": "c1c292ba1d3c9b0ee4e7a13f50084b1a744e5f4aaea49cd3c2b2f4baefeea8c3",
+  "payload_files_manifest_sha256": "2de1e268d8b129dda3bcc42e015e0ae1e4c56cf43e8e69f8fdf4a0cdf5d41791",
+  "runner_sha256": "b4c142e298f68bf64079d3f94bf5d82e4151b7d393a618803ee65cd8c760e8c2"
+}
