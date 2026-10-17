@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  wrapping-native-arm-c1:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Frozen Wrapping source native ARM original Scala dual-entry controls
+          no_output_timeout: 85m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 5000 python3 ci/wrapping-arm-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: wrapping-native-arm-c1
+workflows:
+  wrapping-native-arm-c1:
+    jobs:
+      - wrapping-native-arm-c1

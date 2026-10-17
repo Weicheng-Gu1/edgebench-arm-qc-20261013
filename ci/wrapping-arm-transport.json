@@ -1,0 +1,10 @@
+{
+  "schema": "wrapping-native-arm-encrypted-v1",
+  "source_tree_sha256": "47a3ad17cce1ce78cf3d3b57461a2ebcfb4fc68a4f7aade6df4d37ebbc1a4b8a",
+  "source_archive_sha256": "fc1074e44aa52c77e22b6fe5f8aa12ef243bbf4c8b368b4e0014a4ea2ebd4c0f",
+  "plaintext_sha256": "006145012667a48d1c9d9ef539b5566c2193d52f5eec7fc2b6b44381c0314fc7",
+  "cipher_sha256": "55db9c1296d4d2f88d660bea760de2d4810ea24c20db2f63aff22bc681ec5200",
+  "cipher_hmac_sha256": "17171f631f6d3d514731be690199dd3f596056d00303d00de1914ac2dc2e0717",
+  "payload_files_manifest_sha256": "4c0a71050be7a8a048ac21e40cb21df2b76a2190056435eba5a0aece569dafe7",
+  "runner_sha256": "c1f3a32e4b0ab12a0e717ba7c090173548e1f3d0c51cfecbc3d454e4e61f44b8"
+}
