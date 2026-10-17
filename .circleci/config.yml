@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  slideshow-native-arm-c2:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Frozen Slideshow source native ARM two-role dual-entry controls
+          no_output_timeout: 130m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 7500 python3 ci/slideshow-arm-outer-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: slideshow-native-arm-c2
+workflows:
+  slideshow-native-arm-c2:
+    jobs:
+      - slideshow-native-arm-c2
