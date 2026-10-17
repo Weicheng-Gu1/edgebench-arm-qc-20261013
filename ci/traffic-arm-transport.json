@@ -1,0 +1,12 @@
+{
+  "schema": "traffic-native-arm-encrypted-v1",
+  "source_tree_sha256": "a89ecfa816aec499079cbfa924ac5d8f6ffbf6d4e34d4fd711e3ec457f5d7743",
+  "stage_bundle_sha256": "941131ed81e383d5b068537c858dde55b009cb50b909c3c678d2246dfe960a3b",
+  "stage_manifest_sha256": "7a81051f25a59f70984fb00685ee13c909cad6d1fe25b6dd5190518ebc7acbf4",
+  "source_bootstrap_sha256": "f7a70f42891a790c4398a3b9b80ec626d6ed225ec6b2533ced6d4d77d09b7b03",
+  "runner_sha256": "9075492b92c374798b72f514bf8c190d0f2f5c8b2756a51bf2b863ddc7d8ac13",
+  "plaintext_sha256": "f9bc67ed2d11b107cbffd9825669ebe63ccc1ed338e110f46ab70127d5df8fac",
+  "cipher_sha256": "308c962bf5d25a51e0b39cef40b66d0e8de64ac7bc085743b74f1599bb41ddef",
+  "cipher_hmac_sha256": "96f34ebc98bb0d58bb65223677df85d20026e152716d6629354bedf1887b7aaf",
+  "payload_files_manifest_sha256": "5fb89373231068fa78cf24a36688880767f75296fd6350b61120837fb96edb6d"
+}
