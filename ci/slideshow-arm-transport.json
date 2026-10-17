@@ -1,0 +1,11 @@
+{
+  "schema": "slideshow-native-arm-encrypted-v1",
+  "source_tree_sha256": "a54e0ecb03e2f27ad1c5f9760fe822b54cd969244fbb5a376cdb11180913d095",
+  "plaintext_sha256": "2f8a9e5fff235783378e812b9fd83bf6e0356f3d79924bbeeca0ebd8acde6988",
+  "cipher_sha256": "4972c1dd95d90206a55c970f31bc122d35dc99a58db1827c226c8dd7d0c3afd3",
+  "cipher_hmac_sha256": "7964e249673fbd1c6d342bfdf31bd19408e3f961db85fc0ebe47b7ddd5736fbf",
+  "payload_files_manifest_sha256": "7dfb40e1f044ed97d198e519e5ad6c76a671cc1489455a6d91388e12f0dd5bcc",
+  "preparation_manifest_sha256": "cf977b3e73a6cca515aa43c2740037eb9acf6aa2c1259ff250527fddf9754acf",
+  "source_bootstrap_sha256": "7a168daf440ba1862e9d897873fe6d884889a873619dcde1f00ef06cd460bbf4",
+  "runner_sha256": "3759ffb6ed8440d2224f92d0914785c55a5fa4295482cf663cf83795f47d878f"
+}
