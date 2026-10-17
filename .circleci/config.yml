@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  mentorship-native-arm-20261017-r1:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Frozen Mentorship source native ARM two-role dual-entry controls
+          no_output_timeout: 196m
+          command: |
+            set +x
+            test "$(uname -m)" = aarch64
+            timeout 11500 python3 ci/mentorship-arm-outer-bootstrap.py
+      - store_artifacts:
+          path: circle-artifact
+          destination: mentorship-native-arm-20261017-r1
+workflows:
+  mentorship-native-arm-20261017-r1:
+    jobs:
+      - mentorship-native-arm-20261017-r1

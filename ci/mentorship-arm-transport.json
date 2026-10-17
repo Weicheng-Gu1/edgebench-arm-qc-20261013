@@ -1,0 +1,12 @@
+{
+  "schema": "mentorship-native-arm-encrypted-v1",
+  "source_tree_sha256": "c22f5b277012a5f64df871722a4e13a6576464fa2fcd4c54f34d56f5fe0f89d1",
+  "stage_bundle_sha256": "1d195eacd92e99d7f1bf38dbaa26ba525a7e2b4d9c824e124f40181d8adc835a",
+  "stage_manifest_sha256": "9362f0ece7a25ae1084d62ec193bb530de20bcfc37ee9ee467361289ce020093",
+  "source_bootstrap_sha256": "f7a70f42891a790c4398a3b9b80ec626d6ed225ec6b2533ced6d4d77d09b7b03",
+  "runner_sha256": "077fa7357619ad3009f89337ec9bc9670a682cf57ed080b8456459004303f649",
+  "plaintext_sha256": "20f7942a4e016a132c1e534d5494730704b2c27faefa765f560404312796916d",
+  "cipher_sha256": "ff322ad7d47bdf3148f9535be2871e2ce7328b93e507ee907493202e8895bbf4",
+  "cipher_hmac_sha256": "aa31dfca92168cbe83a82bb9c1403d45066557700fcecc5eb7445c7d70d115ae",
+  "payload_files_manifest_sha256": "bc36524388e15ce9b234481138cd51d1cf0305d351480019eefacc20c84f0209"
+}
